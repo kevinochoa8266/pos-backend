@@ -23,3 +23,17 @@ func CloseConnection(db *sql.DB) (error) {
 	return nil
 }
 
+func CreateSchema(db *sql.DB) (error) {
+	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS employee(
+		id INTEGER PRIMARY KEY,
+		name TEXT NOT NULL,
+		phone INTEGER,
+		address TEXT
+		);
+		`);
+	if err != nil {
+		return err
+	}
+	return nil	
+}
+

@@ -14,9 +14,16 @@ func TestGetConnection(t *testing.T) {
 	}
 }
 
-func TestCloseConnection(t * testing.T) {
+func TestCloseConnection(t *testing.T) {
 	db, _ := store.GetConnection(dbUrl)
 	err := store.CloseConnection(db); if err != nil {
 		t.Error("could not close the database connection")
+	}
+}
+
+func TestCreateScheam(t *testing.T) {
+	db, _ := store.GetConnection(dbUrl)
+	err := store.CreateSchema(db); if err != nil {
+		t.Error("could not create the given schema.")
 	}
 }
