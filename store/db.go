@@ -24,16 +24,28 @@ func CloseConnection(db *sql.DB) (error) {
 }
 
 func CreateSchema(db *sql.DB) (error) {
-	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS employee(
+
+	_, err := db.Exec(
+		`CREATE TABLE IF NOT EXISTS store(
+			id INTEGER PRIMARY KEY,
+			name TEXT NOT NULL,
+			address UNIQUE NOT NULL
+		)`); if err != nil {
+			return err
+		}
+
+	_, err = db.Exec(
+		`CREATE TABLE IF NOT EXISTS employee(
 		id INTEGER PRIMARY KEY,
 		name TEXT NOT NULL,
+		address TEXT,
 		phone INTEGER,
-		address TEXT
+		storeId INTEGER NOT NULL,
+		FOREIGN KEY(storeId) REFERENCES store(id)
 		);
-		`);
-	if err != nil {
-		return err
-	}
+		`); if err != nil {
+			return err
+		}
 	return nil	
 }
 

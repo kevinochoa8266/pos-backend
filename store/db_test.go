@@ -21,9 +21,11 @@ func TestCloseConnection(t *testing.T) {
 	}
 }
 
-func TestCreateScheam(t *testing.T) {
+func TestCreateSchema(t *testing.T) {
 	db, _ := store.GetConnection(dbUrl)
 	err := store.CreateSchema(db); if err != nil {
 		t.Error("could not create the given schema.")
 	}
 }
+
+
