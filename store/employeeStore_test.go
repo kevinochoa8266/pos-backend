@@ -11,7 +11,7 @@ import (
 var db, _ = store.GetConnection(dbUrl)
 
 var name = "John"
-var number = 9417160432
+var number = "9417160432"
 var address = "123 abc"
 
 func init() {

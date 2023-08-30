@@ -1,9 +1,7 @@
 package models
 
-type Employee struct {
+type Store struct {
 	Id      int
 	Name    string
-	Phone   string
 	Address string
-	StoreId int
 }
