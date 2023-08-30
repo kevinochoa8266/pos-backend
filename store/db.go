@@ -30,7 +30,6 @@ func CloseConnection(db *sql.DB) error {
 func CreateSchema(db *sql.DB) error {
 	_, storeErr := db.Exec(`CREATE TABLE IF NOT EXISTS store(
 		id INTEGER PRIMARY KEY,
-		storeId INTEGER,
 		name TEXT NOT NULL,
 		address TEXT
 		);
@@ -40,10 +39,10 @@ func CreateSchema(db *sql.DB) error {
 	}
 	_, empErr := db.Exec(`CREATE TABLE IF NOT EXISTS employee(
 		id INTEGER PRIMARY KEY,
-		storeId INTEGER,
 		fullName TEXT NOT NULL,
 		phoneNumber TEXT NOT NULL,
 		address TEXT,
+		storeId INTEGER,
 		FOREIGN KEY (storeId) REFERENCES store (id)
 		);
 		`)

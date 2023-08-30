@@ -5,4 +5,5 @@ type Employee struct {
 	Name    string
 	Phone   int
 	Address string
+	StoreId int
 }
