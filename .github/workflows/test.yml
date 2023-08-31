@@ -15,12 +15,12 @@ jobs:
     runs-on: ${{ matrix.platform }}
 
     steps:
-      - name: Install go
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
         uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go-version }}
 
-      - uses: actions/setup-go@v4
-
       - name: Test
-        run: go test ./store/
+        run: go test -v ./...
