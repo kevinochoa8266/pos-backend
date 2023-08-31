@@ -2,6 +2,7 @@ package store_test
 
 import (
 	"testing"
+
 	"github.com/kevinochoa8266/pos-backend/store"
 )
 
@@ -16,14 +17,16 @@ func TestGetConnection(t *testing.T) {
 
 func TestCloseConnection(t *testing.T) {
 	db, _ := store.GetConnection(dbUrl)
-	err := store.CloseConnection(db); if err != nil {
+	err := store.CloseConnection(db)
+	if err != nil {
 		t.Error("could not close the database connection")
 	}
 }
 
-func TestCreateScheam(t *testing.T) {
+func TestCreateSchema(t *testing.T) {
 	db, _ := store.GetConnection(dbUrl)
-	err := store.CreateSchema(db); if err != nil {
+	err := store.CreateSchema(db)
+	if err != nil {
 		t.Error("could not create the given schema.")
 	}
 }
