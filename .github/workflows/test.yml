@@ -22,5 +22,8 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: Install dependencies
+        run: go get github.com/kevinochoa8266/pos-backend/store
+
       - name: Test
         run: go test -v ./...
