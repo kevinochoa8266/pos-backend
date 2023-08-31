@@ -9,6 +9,7 @@ import (
 
 var database, _ = store.GetConnection(dbUrl)
 
+// Test variables
 var storeName = "XYZ Store"
 var storeAddress = "123 abc street"
 
