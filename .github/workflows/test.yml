@@ -1,26 +1,19 @@
-name: Test
+name: Go
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: main
 
 jobs:
-  test:
-    strategy:
-      matrix:
-        go-version: [1.21.0]
-        platform: [ubuntu-latest]
-
-    runs-on: ${{ matrix.platform }}
-
+  build:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: "1.21.0"
 
       - name: Build
         run: go build -v ./...
