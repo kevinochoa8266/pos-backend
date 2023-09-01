@@ -61,7 +61,7 @@ func TestGetAll(t *testing.T) {
 	fmt.Println(employees)
 }
 
-func TestSave(t *testing.T) {
+func TestSaveEmployee(t *testing.T) {
 	employeeStore := store.NewEmployeeStore(db)
 
 	employee := models.Employee{

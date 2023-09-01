@@ -28,7 +28,7 @@ func init() {
 	}
 }
 
-func TestStoreSave(t *testing.T) {
+func TestSaveStore(t *testing.T) {
 	newStore := store.NewStore(database)
 
 	store := models.Store{
