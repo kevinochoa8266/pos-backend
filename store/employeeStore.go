@@ -63,6 +63,7 @@ func (employeeStore *EmployeeStore) GetAll() ([]models.Employee, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 	employees := []models.Employee{}
 
 	for rows.Next() {
