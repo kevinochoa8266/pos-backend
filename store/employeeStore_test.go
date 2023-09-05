@@ -1,7 +1,6 @@
 package store_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/kevinochoa8266/pos-backend/models"
@@ -30,7 +29,10 @@ func TestGetAll(t *testing.T) {
 	if err != nil {
 		t.Error("could not get employees from the database")
 	}
-	fmt.Println(employees)
+
+	if len(employees) == 0 {
+		t.Error("no employees were retrieved")
+	}
 }
 
 func TestSaveEmployee(t *testing.T) {
