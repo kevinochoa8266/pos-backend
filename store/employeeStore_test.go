@@ -8,34 +8,6 @@ import (
 	"github.com/kevinochoa8266/pos-backend/store"
 )
 
-var db, _ = store.GetConnection(dbUrl)
-
-var name = "John"
-var number = "9417160432"
-var address = "123 abc"
-
-func init() {
-	err := store.CreateSchema(db)
-	if err != nil {
-		panic(err)
-	}
-	storeQuery := "INSERT INTO store (name, address) VALUES(?, ?)"
-
-	_, err = db.Exec(storeQuery, "hello", "world")
-	if err != nil {
-		panic(err)
-	}
-
-	employeeQuery := "INSERT INTO employee (fullName, phoneNumber, address, storeId) VALUES(?, ?, ?, ?);"
-
-	for i := 0; i < 3; i++ {
-		_, err := db.Exec(employeeQuery, name, number, address, 1)
-		if err != nil {
-			panic(err)
-		}
-	}
-}
-
 func TestGet(t *testing.T) {
 	employeeStore := store.NewEmployeeStore(db)
 
