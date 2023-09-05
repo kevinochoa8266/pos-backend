@@ -41,3 +41,11 @@ func TestGetProduct(t *testing.T) {
 		t.Error("product should not exist at id 1000")
 	}
 }
+
+func TestUpdateProduct(t *testing.T) {
+	
+}
+
+func TestDeleteProduct(t *testing.T) {
+	
+}

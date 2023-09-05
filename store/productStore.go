@@ -2,6 +2,7 @@ package store
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/kevinochoa8266/pos-backend/models"
 )
@@ -48,4 +49,12 @@ func (ps *ProductStore) Get(id int) (*models.Product, error) {
 	}
 
 	return &product, nil
+}
+
+func (ps *ProductStore) Update(*models.Product) error {
+	return errors.ErrUnsupported
+}
+
+func (ps *ProductStore) Delete(*models.Product) error {
+	return errors.ErrUnsupported
 }
