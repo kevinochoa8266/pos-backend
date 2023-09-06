@@ -1,8 +1,10 @@
 package store_test
 
 import (
+	"strconv"
 	"testing"
 
+	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
 )
 
@@ -13,6 +15,11 @@ var address = "123 abc"
 
 var storeName = "XYZ Store"
 var storeAddress = "123 abc street"
+
+var productName = "Chocolate"
+var prices = 5.00
+var inventory = 100
+var storeId = 2
 
 var db, _ = store.GetConnection(dbUrl)
 
@@ -35,6 +42,14 @@ func init() {
 
 	for i := 0; i < 3; i++ {
 		_, err := db.Exec(employeeQuery, name, number, address, 1)
+		if err != nil {
+			panic(err)
+		}
+	}
+	ps := store.NewProductStore(db)
+
+	for i := 0; i < 3; i++ {
+		_, err := ps.Save(&models.Product{Id: strconv.Itoa(i), Name: productName, Price: float32(prices), Inventory: inventory, StoreId: storeId })
 		if err != nil {
 			panic(err)
 		}

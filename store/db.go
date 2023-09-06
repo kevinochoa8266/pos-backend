@@ -51,7 +51,7 @@ func CreateSchema(db *sql.DB) error {
 	}
 
 	_, productErr := db.Exec(`CREATE TABLE IF NOT EXISTS product(
-		id INTEGER PRIMARY KEY,
+		id TEXT PRIMARY KEY,
 		storeId INTEGER,
 		name TEXT NOT NULL,
 		price REAL NOT NULL,
