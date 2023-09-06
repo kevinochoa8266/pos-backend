@@ -34,6 +34,15 @@ func (ps *ProductStore) Save(product *models.Product) (string, error) {
 		return "", fmt.Errorf("could not insert product with id %s into the database", product.Id)
 	}
 
+	if product.TaxRate != 0.00 {
+		err := ps.addTax(product.Id, product.TaxIncluded, product.TaxRate)
+		if err != nil {
+			return "", fmt.Errorf("product was saved, but the tax was not added. %s", err.Error())
+		}
+	}
+
+	if product.Bul
+
 	return product.Id, nil
 }
 
@@ -106,5 +115,19 @@ func (ps *ProductStore) Delete(id string) error {
 	if err != nil || rowsDeleted != 1 {
 		return errors.New("product with the given id does not exist")
 	}
+	return nil
+}
+
+func (ps *ProductStore) addTax(id string, taxIncluded bool, taxRate float32) (error) {
+	query := "INSERT INTO tax (id, taxIncluded, taxRate) VALUES(?,?,?)"
+
+	result, err := ps.db.Exec(query, id, taxIncluded, taxRate)
+	if err != nil {
+		return fmt.Errorf("query failed to add the the tax row with id: %s. %s",id, err.Error())
+	}
+	affectedRows, err := result.RowsAffected(); if err != nil || affectedRows != 1 {
+		return fmt.Errorf("tax row was unable to be inserted with id: %s", id)
+	}
+
 	return nil
 }
