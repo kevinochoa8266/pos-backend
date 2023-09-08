@@ -53,7 +53,7 @@ func (ps *ProductStore) Get(id string) (*models.Product, error) {
 		return nil, row.Err()
 	}
 
-	err := row.Scan(&product.Id, &product.Name, &product.BulkPrice, &product.Inventory, &product.StoreId, &product.)
+	err := row.Scan(&product.Id, &product.Name, &product.BulkPrice, &product.Inventory, &product.StoreId)
 	if err != nil {
 		return nil, err
 	}
