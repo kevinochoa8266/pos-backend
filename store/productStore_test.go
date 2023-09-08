@@ -25,10 +25,24 @@ func TestSaveProduct(t *testing.T) {
 	}
 }
 
-func TestGetProduct(t *testing.T) {
-	productStore.Save(&product)
+func TestSaveBulkProduct(t *testing.T) {
+	_, err := productStore.Save(&product)
+	if err != nil {
+		t.Errorf("unable to save given product into the database")
+	}
+	err = productStore.AddIndividualPrice(product.Id, 10, 20)
+	if err != nil {
+		t.Errorf("unable to add a bulk product into the database: %s", err.Error())
+	}
+	err = productStore.AddIndividualPrice("incorrect_id", 25, 25)
+	if err == nil {
+		t.Error("an error should have thrown with the given id")
+	}
+}
 
-	product, err := productStore.Get(product.Id)
+func TestGetProduct(t *testing.T) {
+
+	product, err := productStore.Get("1")
 	if err != nil {
 		t.Errorf("could not get product to to err: %s", err.Error())
 	}
