@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"encoding/csv"
@@ -10,10 +10,10 @@ import (
 	"github.com/kevinochoa8266/pos-backend/store"
 )
 
-func main() {
+func ReadCsvData(path string) error { //TODO: add better error handling and finish this up tomorrow.
 	f, err := os.Open("candy_data.csv")
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer f.Close()
 

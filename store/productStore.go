@@ -30,6 +30,7 @@ func (ps *ProductStore) Save(product *models.Product) (string, error) {
 		return "", fmt.Errorf("error occurred saving %s into the database. %s", product.Name, err.Error())
 	}
 	affectedRows, err := result.RowsAffected()
+	
 	if err != nil || affectedRows != 1 {
 		return "", fmt.Errorf("could not insert product with id %s into the database", product.Id)
 	}

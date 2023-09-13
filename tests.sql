@@ -62,6 +62,6 @@ SELECT * FROM product;
 
 SELECT * FROM product p JOIN bulk b ON p.id=b.productId;
 
-SELECT p.id, p.name, p. p.individualPrice, p.bulkQuantity,   FROM product p LEFT JOIN bulk b ON p.id = b.productId;
+SELECT * FROM product p LEFT JOIN bulk b ON p.id = b.productId;
 
 

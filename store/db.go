@@ -29,7 +29,7 @@ func CloseConnection(db *sql.DB) error {
 
 func CreateSchema(db *sql.DB) error {
 	if _, err := db.Exec("PRAGMA foreign_keys = ON", nil); err != nil {
-		return err 
+		return err
 	}
 	_, storeErr := db.Exec(`CREATE TABLE IF NOT EXISTS store(
 		id INTEGER PRIMARY KEY,
@@ -56,7 +56,7 @@ func CreateSchema(db *sql.DB) error {
 	_, productErr := db.Exec(`CREATE TABLE IF NOT EXISTS product(
 		id TEXT PRIMARY KEY,
 		name TEXT NOT NULL,
-		price REAL NOT NULL,
+		price INTEGER NOT NULL,
 		inventory INTEGER,
 		storeId INTEGER,
 		FOREIGN KEY(storeId) REFERENCES store(id)

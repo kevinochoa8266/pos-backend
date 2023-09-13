@@ -26,7 +26,7 @@ func (employeeStore *EmployeeStore) Save(employee *models.Employee) (int64, erro
 				)
 				VALUES(?, ?, ?, ?);
 	`
-	result, err := employeeStore.db.Exec(query, employee.Name, employee.Phone, employee.Address, employee.StoreId)
+	result, err := employeeStore.db.Exec(query, &employee.Name, &employee.Phone, &employee.Address, &employee.StoreId)
 	if err != nil {
 		return 0, err
 	}
