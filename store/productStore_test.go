@@ -10,7 +10,7 @@ import (
 var product = models.Product{
 	Id:        "1024",
 	Name:      "Chocolate",
-	Price:     5.00,
+	BulkPrice: 5.00,
 	Inventory: 100,
 	StoreId:   2,
 }
@@ -23,16 +23,28 @@ func TestSaveProduct(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
+
+	_, err = productStore.Save(&product)
+	if err == nil {
+		t.Errorf("product with id %s should already exist", product.Id)
+	}
 }
 
 func TestSaveBulkProduct(t *testing.T) {
-	_, err := productStore.Save(&product)
+	var chips = models.Product{
+		Id:        "1036",
+		Name:      "chips",
+		BulkPrice: 5.00,
+		Inventory: 100,
+		StoreId:   2,
+	}
+	_, err := productStore.Save(&chips)
 	if err != nil {
 		t.Errorf("unable to save given product into the database")
 	}
-	err = productStore.AddIndividualPrice(product.Id, 10, 20)
+	err = productStore.AddIndividualPrice(chips.Id, 10, 20)
 	if err != nil {
-		t.Errorf("unable to add a bulk product into the database: %s", err.Error())
+		t.Error(err.Error())
 	}
 	err = productStore.AddIndividualPrice("incorrect_id", 25, 25)
 	if err == nil {
@@ -95,14 +107,14 @@ func TestUpdateProduct(t *testing.T) {
 }
 
 func TestDeleteProduct(t *testing.T) {
-	validId := "2"
 	invalidId := "2525"
-	err := productStore.Delete(validId)
+	product, _ := productStore.Get("1")
+	err := productStore.Delete(product)
 	if err != nil {
-		t.Errorf("Could not delete product with id: %s, err: %s", validId, err.Error())
+		t.Error(err.Error())
 	}
-
-	err = productStore.Delete(invalidId)
+	product.Id = invalidId
+	err = productStore.Delete(product)
 	if err == nil {
 		t.Errorf("product with id %s should not exist", invalidId)
 	}

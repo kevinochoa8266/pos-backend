@@ -56,7 +56,7 @@ func CreateSchema(db *sql.DB) error {
 	_, productErr := db.Exec(`CREATE TABLE IF NOT EXISTS product(
 		id TEXT PRIMARY KEY,
 		name TEXT NOT NULL,
-		price INTEGER NOT NULL,
+		bulkPrice INTEGER NOT NULL,
 		inventory INTEGER,
 		storeId INTEGER,
 		FOREIGN KEY(storeId) REFERENCES store(id)
@@ -68,8 +68,8 @@ func CreateSchema(db *sql.DB) error {
 
 	_, bulkErr := db.Exec(`CREATE TABLE IF NOT EXISTS bulk(
 		productId TEXT,
-		individualPrice INTEGER NOT NULL,
-		bulkQuantity INTEGER,
+		unitPrice INTEGER NOT NULL,
+		itemsInPacket INTEGER NOT NULL,
 		FOREIGN KEY (productId) REFERENCES product(id)
 		);
 		`)

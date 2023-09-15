@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS store(
 CREATE TABLE IF NOT EXISTS product(
 		id TEXT PRIMARY KEY,
 		name TEXT NOT NULL,
-		price INTEGER NOT NULL,
+		unitPrice INTEGER NOT NULL,
 		inventory INTEGER,
 		storeId INTEGER,
 		FOREIGN KEY(storeId) REFERENCES store(id)
@@ -21,8 +21,8 @@ CREATE TABLE IF NOT EXISTS product(
 
 CREATE TABLE IF NOT EXISTS bulk(
 		productId TEXT,
-		individualPrice INTEGER NOT NULL,
-		bulkQuantity INTEGER,
+		bulkPrice INTEGER NOT NULL,
+		itemsInPacket INTEGER NOT NULL,
 		FOREIGN KEY (productId) REFERENCES product(id)
 		);
 
@@ -37,23 +37,24 @@ INSERT INTO store (
 INSERT INTO product (
 		id,
 		name,
-		price,
+		unitPrice,
 		inventory,
 		storeId
 		)
 		VALUES("1","chocolate", 5, 10, 1);
+		
 INSERT INTO product (
 		id,
 		name,
-		price,
+		unitPrice,
 		inventory,
 		storeId
 		)
-		VALUES("2","lolipop", 5, 10, 1);
+		VALUES("2","lolipop", 5, 1, 1);
 
 
-INSERT INTO bulk(productId, individualPrice, bulkQuantity)
-		VALUES("1", 1, 5);
+INSERT INTO bulk(productId, bulkPrice, itemsInPacket)
+		VALUES("1", 10, 5);
 
 
 
@@ -62,6 +63,6 @@ SELECT * FROM product;
 
 SELECT * FROM product p JOIN bulk b ON p.id=b.productId;
 
-SELECT * FROM product p LEFT JOIN bulk b ON p.id = b.productId;
+SELECT p.id, p.name, p.unitPrice, b.bulkPrice, p.inventory, b.itemsInPacket, p.storeId FROM product p LEFT JOIN bulk b ON p.id = b.productId;
 
 

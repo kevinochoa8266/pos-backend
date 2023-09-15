@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/csv"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -10,8 +11,8 @@ import (
 	"github.com/kevinochoa8266/pos-backend/store"
 )
 
-func ReadCsvData(path string) error { //TODO: add better error handling and finish this up tomorrow.
-	f, err := os.Open("candy_data.csv")
+func ReadCsvData(path string, pathToDb string) error { //TODO: add better error handling and finish this up tomorrow.
+	f, err := os.Open(path)
 	if err != nil {
 		return err
 	}
@@ -23,12 +24,14 @@ func ReadCsvData(path string) error { //TODO: add better error handling and fini
 		log.Fatal(err)
 	}
 
-	db, err := store.GetConnection("store.db")
+	db, err := store.GetConnection(pathToDb)
 
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("could not get a connection to db: %s due to error: %s", pathToDb, err.Error())
 	}
-	store.CreateSchema(db)
+	if err = store.CreateSchema(db); err != nil {
+		return fmt.Errorf("could not create the db schema at store.db")
+	}
 
 	query := "INSERT INTO STORE (id, name, address) VALUES(?,?,?)"
 	_, err = db.Exec(query, 1, "casa dulce", "274 Cape Harbour")
@@ -39,16 +42,20 @@ func ReadCsvData(path string) error { //TODO: add better error handling and fini
 
 	ps := store.NewProductStore(db)
 
-	for _, line := range data[1:5] {
+	for _, line := range data[1:50] {
 		product, err := extractProduct(line)
 		if err != nil {
 			panic(err)
 		}
 		product.StoreId = 1
 		if _, err = ps.Save(product); err != nil {
-			panic(err)
+			return fmt.Errorf("product (%s, %s) could not be saved: %s",
+				product.Id,
+				product.Name,
+				err.Error())
 		}
 	}
+	return nil
 }
 
 func extractProduct(l []string) (*models.Product, error) {
@@ -60,14 +67,14 @@ func extractProduct(l []string) (*models.Product, error) {
 	taxApplied, _ := strconv.ParseBool(l[3])
 	product.Inventory, _ = strconv.Atoi(l[4])
 	product.BulkPrice, _ = strconv.Atoi(l[5])
-	product.Price, _ = strconv.Atoi(l[6])
+	product.UnitPrice, _ = strconv.Atoi(l[6])
 	product.ItemsInPacket, _ = strconv.Atoi(l[7])
 
 	if tax != 0 && !taxApplied {
 		var taxPrice float32 = float32(product.BulkPrice) * taxDecimal
 		product.BulkPrice += int(taxPrice)
-		if product.Price != 0 {
-			product.Price += int(taxPrice)
+		if product.UnitPrice != 0 {
+			product.UnitPrice += int(taxPrice)
 		}
 	}
 
