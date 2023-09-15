@@ -96,18 +96,19 @@ func (Store *shopStore) Update(store *models.Store) error {
 	return nil
 }
 
-func (Store *shopStore) Delete(Id int) error {
-	query := `DELETE FROM store WHERE Id = ?`
+// TODO: Clean up the deletes from all foreign keys before deleting this store
+// func (Store *shopStore) Delete(Id int) error {
+// 	query := `DELETE FROM store WHERE Id = ?`
 
-	result, err := Store.db.Exec(query, Id)
+// 	result, err := Store.db.Exec(query, Id)
 
-	if err != nil {
-		return err
-	}
+// 	if err != nil {
+// 		return err
+// 	}
 
-	rowsDeleted, err := result.RowsAffected()
-	if err != nil || rowsDeleted != 1 {
-		return errors.New("shop with the given id does not exist")
-	}
-	return nil
-}
+// 	rowsDeleted, err := result.RowsAffected()
+// 	if err != nil || rowsDeleted != 1 {
+// 		return errors.New("shop with the given id does not exist")
+// 	}
+// 	return nil
+// }

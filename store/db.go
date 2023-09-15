@@ -28,6 +28,9 @@ func CloseConnection(db *sql.DB) error {
 }
 
 func CreateSchema(db *sql.DB) error {
+	if _, err := db.Exec("PRAGMA foreign_keys = ON", nil); err != nil {
+		return err
+	}
 	_, storeErr := db.Exec(`CREATE TABLE IF NOT EXISTS store(
 		id INTEGER PRIMARY KEY,
 		name TEXT NOT NULL,
@@ -52,11 +55,11 @@ func CreateSchema(db *sql.DB) error {
 
 	_, productErr := db.Exec(`CREATE TABLE IF NOT EXISTS product(
 		id TEXT PRIMARY KEY,
-		storeId INTEGER,
 		name TEXT NOT NULL,
-		price REAL NOT NULL,
+		bulkPrice INTEGER NOT NULL,
 		inventory INTEGER,
-		FOREIGN KEY (storeId) REFERENCES store (id)
+		storeId INTEGER,
+		FOREIGN KEY(storeId) REFERENCES store(id)
 		);
 		`)
 	if productErr != nil {
@@ -64,10 +67,10 @@ func CreateSchema(db *sql.DB) error {
 	}
 
 	_, bulkErr := db.Exec(`CREATE TABLE IF NOT EXISTS bulk(
-		productId INTEGER,
-		bulkPrice REAL NOT NULL,
-		bulkQuantity INTEGER,
-		FOREIGN KEY (productId) REFERENCES product (id)
+		productId TEXT,
+		unitPrice INTEGER NOT NULL,
+		itemsInPacket INTEGER NOT NULL,
+		FOREIGN KEY (productId) REFERENCES product(id)
 		);
 		`)
 	if bulkErr != nil {
