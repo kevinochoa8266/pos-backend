@@ -1,11 +1,11 @@
 package models
 
 type Product struct {
-	Id            string
-	Name          string
-	UnitPrice     int
-	BulkPrice     int
-	Inventory     int
-	ItemsInPacket int
-	StoreId       int
+	Id            string `json:"id"`
+	Name          string `json:"name"`
+	UnitPrice     int    `json:"unitPrice"`
+	BulkPrice     int    `json:"bulkPrice"`
+	Inventory     int    `json:"inventory"`
+	ItemsInPacket int    `json:"itemsInPacket"`
+	StoreId       int    `json:"storeId"`
 }

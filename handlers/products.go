@@ -3,9 +3,11 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
 
 	"log/slog"
@@ -51,4 +53,20 @@ func HandleGetProduct(writer http.ResponseWriter, request *http.Request) {
 
 	writer.WriteHeader(http.StatusOK)
 	json.NewEncoder(writer).Encode(product)
+}
+
+func HandleAddProduct(writer http.ResponseWriter, request *http.Request) {
+	var product models.Product
+	json.NewDecoder(request.Body).Decode(&product)
+
+	id, err := productStore.Save(&product)
+	if err != nil {
+		writer.WriteHeader(http.StatusBadRequest)
+		returnErr := fmt.Errorf("could not save product with id: %s", product.Id)
+		finalErr, _ := json.Marshal(returnErr.Error())
+		writer.Write(finalErr)
+		logger.Error("could not save given product %s into database. err: %s", product.Name, err.Error())
+	}
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode(id)
 }
