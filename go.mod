@@ -2,7 +2,11 @@ module github.com/kevinochoa8266/pos-backend
 
 go 1.21.0
 
-require modernc.org/sqlite v1.25.0
+require (
+	github.com/gorilla/mux v1.8.0
+	github.com/joho/godotenv v1.5.1
+	modernc.org/sqlite v1.25.0
+)
 
 require (
 	github.com/dustin/go-humanize v1.0.1 // indirect

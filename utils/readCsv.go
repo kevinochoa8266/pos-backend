@@ -36,7 +36,7 @@ func ReadCsvData(path string, pathToDb string) error { //TODO: add better error 
 	query := "INSERT INTO STORE (id, name, address) VALUES(?,?,?)"
 	_, err = db.Exec(query, 1, "casa dulce", "274 Cape Harbour")
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("store with id 1 already exists. %s", err.Error())
 	}
 	defer db.Close()
 
