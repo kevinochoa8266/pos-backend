@@ -32,7 +32,7 @@ func HandleGetProducts(writer http.ResponseWriter, request *http.Request) {
 
 	products, err := productStore.GetAll()
 	if err != nil {
-		logger.Error("could not retrieve products from the database: %s", err.Error())
+		logger.Error("could not retrieve products from the database. %s", err.Error(), 1)
 		writer.WriteHeader(http.StatusInternalServerError)
 	}
 
