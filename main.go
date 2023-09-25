@@ -5,23 +5,30 @@ import (
 	"net/http"
 	"os"
 
+
+	"github.com/joho/godotenv"
 	"github.com/gorilla/mux"
 	"github.com/kevinochoa8266/pos-backend/handlers"
 	"github.com/kevinochoa8266/pos-backend/utils"
 )
 
 func main() {
-	if _, err := os.Open("store.db"); err != nil {
-		if err := utils.ReadCsvData("candy_data.csv", "store.db"); err != nil {
-			panic(err)
-		}
+
+	err := godotenv.Load(".env"); if err != nil {
+		log.Fatalf("Could not load env variables. err: %s", err.Error())
+	}
+
+	db_URL := os.Getenv("DB_URL")
+	if err := utils.ReadCsvData("candy_data.csv", db_URL); err != nil {
+		log.Println("File already exists")
 	}
 
 	router := mux.NewRouter()
 	router.HandleFunc("/products", handlers.HandleGetProducts).Methods("GET")
 	router.HandleFunc("/products/{id}", handlers.HandleGetProduct).Methods("GET")
 
-	log.Fatal(http.ListenAndServe("localhost:8080", jsonContentTypeMiddleWare(router)))
+	log.Println("Starting server at port 8080")
+	log.Fatal(http.ListenAndServe(":8080", jsonContentTypeMiddleWare(router)))
 }
 
 func jsonContentTypeMiddleWare(handler http.Handler) http.Handler {
