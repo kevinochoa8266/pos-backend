@@ -7,4 +7,4 @@ make build_container:
 	docker build --tag sweetooth-backend .
 
 make run_container:
-	docker run -v ~/data/candyData.db:/app/store.db -d -p 8080:8080 sweetooth-backend
+	docker run -v ~/data/candyData.db:/app/store.db -d -p 8080:8080 --name pos-server sweetooth-backend
