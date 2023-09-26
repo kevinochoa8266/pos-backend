@@ -122,5 +122,6 @@ func CreateSchema(db *sql.DB) error {
 	if orderErr != nil {
 		return orderErr
 	}
+
 	return nil
 }

@@ -3,19 +3,30 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
-	"github.com/kevinochoa8266/pos-backend/app"
-	"github.com/kevinochoa8266/pos-backend/router"
+	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
+	"github.com/kevinochoa8266/pos-backend/handlers"
+	"github.com/kevinochoa8266/pos-backend/utils"
 )
 
 func main() {
 
-	err := app.SetupApp()
+	err := godotenv.Load(".env")
 	if err != nil {
-		panic(err)
+		log.Fatalf("Could not load env variables. err: %s", err.Error())
 	}
 
-	router := router.CreateRouter()
+	db_URL := os.Getenv("DB_URL")
+	if err := utils.ReadCsvData("candy_data.csv", db_URL); err != nil {
+		log.Println("File already exists")
+	}
+
+	router := mux.NewRouter()
+	router.HandleFunc("/products", handlers.HandleGetProducts).Methods("GET")
+	router.HandleFunc("/products/{id}", handlers.HandleGetProduct).Methods("GET")
+	router.HandleFunc("/products", handlers.HandleAddProduct).Methods("POST")
 
 	log.Println("Starting server at port 8080")
 	log.Fatal(http.ListenAndServe(":8080", jsonContentTypeMiddleWare(router)))
