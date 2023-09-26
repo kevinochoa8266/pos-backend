@@ -4,9 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/kevinochoa8266/pos-backend/app"
-	"github.com/kevinochoa8266/pos-backend/handlers"
+	"github.com/kevinochoa8266/pos-backend/router"
 )
 
 func main() {
@@ -16,10 +15,7 @@ func main() {
 		panic(err)
 	}
 
-	router := mux.NewRouter()
-	router.HandleFunc("/products", handlers.HandleGetProducts).Methods("GET")
-	router.HandleFunc("/products/{id}", handlers.HandleGetProduct).Methods("GET")
-	router.HandleFunc("/products", handlers.HandleAddProduct).Methods("POST")
+	router := router.CreateRouter()
 
 	log.Println("Starting server at port 8080")
 	log.Fatal(http.ListenAndServe(":8080", jsonContentTypeMiddleWare(router)))
