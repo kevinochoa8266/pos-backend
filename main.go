@@ -3,24 +3,17 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
+	"github.com/kevinochoa8266/pos-backend/app"
 	"github.com/kevinochoa8266/pos-backend/handlers"
-	"github.com/kevinochoa8266/pos-backend/utils"
 )
 
 func main() {
 
-	err := godotenv.Load(".env")
+	err := app.SetupApp()
 	if err != nil {
-		log.Fatalf("Could not load env variables. err: %s", err.Error())
-	}
-
-	db_URL := os.Getenv("DB_URL")
-	if err := utils.ReadCsvData("candy_data.csv", db_URL); err != nil {
-		log.Println("File already exists")
+		panic(err)
 	}
 
 	router := mux.NewRouter()
