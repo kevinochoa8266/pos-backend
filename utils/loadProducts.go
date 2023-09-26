@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"database/sql"
 	"encoding/csv"
 	"fmt"
 	"log"
@@ -11,7 +12,7 @@ import (
 	"github.com/kevinochoa8266/pos-backend/store"
 )
 
-func ReadCsvData(path string, pathToDb string) error { //TODO: add better error handling and finish this up tomorrow.
+func LoadProductsIntoStore(storeId int64, db *sql.DB, path string) error {
 	f, err := os.Open(path)
 	if err != nil {
 		return err
@@ -24,22 +25,6 @@ func ReadCsvData(path string, pathToDb string) error { //TODO: add better error 
 		log.Fatal(err)
 	}
 
-	db, err := store.GetConnection(pathToDb)
-
-	if err != nil {
-		return fmt.Errorf("could not get a connection to db: %s due to error: %s", pathToDb, err.Error())
-	}
-	if err = store.CreateSchema(db); err != nil {
-		return fmt.Errorf("could not create the db schema at store.db")
-	}
-
-	query := "INSERT INTO STORE (id, name, address) VALUES(?,?,?)"
-	_, err = db.Exec(query, 1, "casa dulce", "274 Cape Harbour")
-	if err != nil {
-		return fmt.Errorf("store with id 1 already exists. %s", err.Error())
-	}
-	defer db.Close()
-
 	ps := store.NewProductStore(db)
 
 	for _, line := range data[1:50] {
@@ -47,7 +32,7 @@ func ReadCsvData(path string, pathToDb string) error { //TODO: add better error 
 		if err != nil {
 			panic(err)
 		}
-		product.StoreId = 1
+		product.StoreId = int(storeId)
 		if _, err = ps.Save(product); err != nil {
 			return fmt.Errorf("product (%s, %s) could not be saved: %s",
 				product.Id,
