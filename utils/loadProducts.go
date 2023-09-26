@@ -12,8 +12,8 @@ import (
 	"github.com/kevinochoa8266/pos-backend/store"
 )
 
-func LoadProductsIntoStore(storeId int64, db *sql.DB) error {
-	f, err := os.Open("candy_data.csv")
+func LoadProductsIntoStore(storeId int64, db *sql.DB, path string) error {
+	f, err := os.Open(path)
 	if err != nil {
 		return err
 	}

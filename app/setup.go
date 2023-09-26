@@ -55,11 +55,12 @@ func SetupApp() error {
 	}
 
 	if len(products) == 0 {
-		stores, err = shopStore.GetAll(); if err != nil {
+		stores, err = shopStore.GetAll()
+		if err != nil {
 			return err
 		}
 		storeId := stores[0].Id
-		if err = utils.LoadProductsIntoStore(int64(storeId), db); err != nil {
+		if err = utils.LoadProductsIntoStore(int64(storeId), db, "candy_data.csv"); err != nil {
 			return err
 		}
 	}

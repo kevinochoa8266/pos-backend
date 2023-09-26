@@ -8,7 +8,7 @@ import (
 	"github.com/kevinochoa8266/pos-backend/utils"
 )
 
-func TestReadCsv(t *testing.T) {
+func TestLoadProducts(t *testing.T) {
 	db, _ := store.GetConnection(":memory:")
 
 	store.CreateSchema(db)
@@ -18,11 +18,11 @@ func TestReadCsv(t *testing.T) {
 		t.Errorf("unable to set up db for testing.")
 	}
 
-	if err := utils.LoadProductsIntoStore(id, db); err != nil {
+	if err := utils.LoadProductsIntoStore(id, db, "../candy_data.csv"); err != nil {
 		t.Errorf("unable to save the products into the test db. %s", err.Error())
 	}
 	fakeId := 150
-	if err := utils.LoadProductsIntoStore(int64(fakeId), db); err == nil {
+	if err := utils.LoadProductsIntoStore(int64(fakeId), db, "../candy_data.csv"); err == nil {
 		t.Errorf("store with id %d does not exist", fakeId)
 	}
 }
