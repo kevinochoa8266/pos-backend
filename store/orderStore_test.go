@@ -13,7 +13,7 @@ var os = store.NewOrderStore(db)
 
 func TestSaveOrder(t *testing.T) {
 	order := models.Order{
-		Id: uuid.New(),
+		Id:         uuid.New(),
 		ProductId:  "1",
 		CustomerId: 0,
 		Date:       time.Now(),
@@ -31,5 +31,31 @@ func TestSaveOrder(t *testing.T) {
 	if err == nil {
 		t.Error("the productId associated with the order does not exist")
 	}
+}
 
+func TestGetOrders(t *testing.T) {
+	order := models.Order{
+		Id:         uuid.New(),
+		ProductId:  "1",
+		CustomerId: 0,
+		Date:       time.Now(),
+		Quantity:   5,
+		TotalPrice: 4500,
+	}
+
+	for i := 0; i < 3; i++ {
+		order.Id = uuid.New()
+		err := os.Save(&order)
+		if err != nil {
+			t.Error("unable to create the orders for the test")
+		}
+	}
+
+	orders, err := os.GetOrders()
+	if err != nil {
+		t.Errorf("unable to get all orders. err: %s", err.Error())
+	}
+	if len(orders) != 3 {
+		t.Errorf("grabbed unexpected number of orders")
+	}
 }
