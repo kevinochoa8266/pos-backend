@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-
+	// add changes to git
 	err := app.SetupApp()
 	if err != nil {
 		panic(err)
