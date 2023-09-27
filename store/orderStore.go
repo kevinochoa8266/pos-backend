@@ -57,3 +57,26 @@ func (os *OrderStore) GetOrders() ([]models.Order, error) {
 	}
 	return orders, nil
 }
+
+func (os *OrderStore) GetOrder(id string) ([]models.Order, error) {
+	query := "SELECT id, productId, customerId, date, quantity, totalPrice FROM orders WHERE id = ?"
+	rows, err := os.db.Query(query, id)
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to perform query to get all orders. err: %s", err.Error())
+	}
+	defer rows.Close()
+
+	orders := []models.Order{}
+	for rows.Next() {
+		order := models.Order{}
+
+		err := rows.Scan(&order.Id, &order.ProductId,
+			&order.CustomerId, &order.Date, &order.Quantity, &order.TotalPrice)
+		if err != nil {
+			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
+		}
+		orders = append(orders, order)
+	}
+	return orders, nil
+}
