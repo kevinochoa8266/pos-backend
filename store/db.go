@@ -110,13 +110,13 @@ func CreateSchema(db *sql.DB) error {
 	}
 
 	_, orderErr := db.Exec(`CREATE TABLE IF NOT EXISTS orders(
-		id INTEGER PRIMARY KEY,
-		productId INTEGER,
+		id TEXT NOT NULL,
+		date DATE NOT NULL,
+		quantity INTEGER NOT NULL,
+		totalPrice INTEGER NOT NULL,
+		productId INTEGER NOT NULL,
 		customerId INTEGER,
-		date TEXT NOT NULL,
-		quantity INTEGER,
-		FOREIGN KEY (productId) REFERENCES product (id),
-		FOREIGN KEY (customerId) REFERENCES customer (id)
+		FOREIGN KEY (productId) REFERENCES product (id)
 		);
 		`)
 	if orderErr != nil {
