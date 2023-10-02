@@ -7,7 +7,7 @@ import (
 	"github.com/kevinochoa8266/pos-backend/models"
 )
 
-var errFoo = errors.New("The shop with this id can not be found.")
+var errFoo = errors.New("the shop with this id can not be found")
 
 type shopStore struct {
 	db *sql.DB

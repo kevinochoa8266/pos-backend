@@ -48,7 +48,7 @@ func init() {
 	}
 	ps := store.NewProductStore(db)
 
-	for i := 0; i < 3; i++ {
+	for i := 1; i < 10; i++ {
 		_, err := ps.Save(&models.Product{
 						Id: strconv.Itoa(i),
 						Name: productName,
@@ -61,6 +61,7 @@ func init() {
 			panic(err)
 		}
 	}
+
 
 }
 
