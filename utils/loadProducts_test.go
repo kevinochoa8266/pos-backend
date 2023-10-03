@@ -19,12 +19,13 @@ func TestLoadProducts(t *testing.T) {
 	}
 
 	if err = utils.LoadProductsIntoStore(id, db, "../candy_data.csv"); err != nil {
+		t.Log(id)
 		t.Errorf("unable to save the products into the test db. %s", err.Error())
 	}
 
 	fakeId := "XYZ"
 	if err = utils.LoadProductsIntoStore(fakeId, db, "../candy_data.csv"); err == nil {
-		t.Errorf("store with id %d does not exist", fakeId)
+		t.Errorf("store with id %s does not exist", fakeId)
 	}
 
 	if err = utils.LoadProductsIntoStore(id, db, "incorrect path"); err == nil {

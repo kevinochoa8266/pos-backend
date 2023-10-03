@@ -3,7 +3,6 @@ package store
 import (
 	"database/sql"
 	"errors"
-	"strconv"
 
 	"github.com/kevinochoa8266/pos-backend/models"
 )
@@ -26,16 +25,12 @@ func (Store ShopStore) Save(store *models.Store) (string, error) {
 				)
 				VALUES(?, ?, ?);
 	`
-	result, err := Store.db.Exec(query, &store.Id, &store.Name, &store.Address)
+	_, err := Store.db.Exec(query, &store.Id, &store.Name, &store.Address)
 	if err != nil {
 		return "", err
 	}
 
-	id, err := result.LastInsertId()
-	if err != nil {
-		return "", err
-	}
-	return strconv.FormatInt(id, 10), nil
+	return store.Id, nil
 }
 
 func (Store ShopStore) Get(id string) (*models.Store, error) {

@@ -29,19 +29,22 @@ func init() {
 		panic(err)
 	}
 
-	storeQuery := "INSERT INTO store (name, address) VALUES(?, ?)"
-
-	for i := 0; i < 3; i++ {
-		_, err := db.Exec(storeQuery, storeName, storeAddress)
-		if err != nil {
-			panic(err)
-		}
+	query := `INSERT INTO store (
+				Id,
+				name,
+				address
+				)
+				VALUES(?, ?, ?);
+	`
+	_, err = db.Exec(query, storeId, storeName, storeAddress)
+	if err != nil {
+		panic(err)
 	}
 
 	employeeQuery := "INSERT INTO employee (fullName, phoneNumber, address, storeId) VALUES(?, ?, ?, ?);"
 
 	for i := 0; i < 3; i++ {
-		_, err := db.Exec(employeeQuery, name, number, address, 1)
+		_, err := db.Exec(employeeQuery, name, number, address, storeId)
 		if err != nil {
 			panic(err)
 		}
@@ -50,18 +53,17 @@ func init() {
 
 	for i := 1; i < 10; i++ {
 		_, err := ps.Save(&models.Product{
-						Id: strconv.Itoa(i),
-						Name: productName,
-						UnitPrice: price,
-						Inventory: inventory,
-						BulkPrice: price * 5,
-						ItemsInPacket: 10,
-						StoreId: storeId})
+			Id:            strconv.Itoa(i),
+			Name:          productName,
+			UnitPrice:     price,
+			Inventory:     inventory,
+			BulkPrice:     price * 5,
+			ItemsInPacket: 10,
+			StoreId:       storeId})
 		if err != nil {
 			panic(err)
 		}
 	}
-
 
 }
 
