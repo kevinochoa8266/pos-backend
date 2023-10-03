@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/kevinochoa8266/pos-backend/models"
+	"github.com/kevinochoa8266/pos-backend/service"
 	"github.com/kevinochoa8266/pos-backend/store"
 	"github.com/kevinochoa8266/pos-backend/utils"
 )
@@ -34,17 +34,7 @@ func SetupApp() error {
 		return err
 	}
 	if len(stores) == 0 {
-		name := os.Getenv("STORE_NAME")
-		address := os.Getenv("STORE_ADDRESS")
-		shop := models.Store{
-			Name:    name,
-			Address: address,
-		}
-
-		_, err := shopStore.Save(&shop)
-		if err != nil {
-			return err
-		}
+		service.InitializeShop(&shopStore)
 	}
 	productStore := store.NewProductStore(db)
 
@@ -59,7 +49,7 @@ func SetupApp() error {
 			return err
 		}
 		storeId := stores[0].Id
-		if err = utils.LoadProductsIntoStore(int64(storeId), db, "candy_data.csv"); err != nil {
+		if err = utils.LoadProductsIntoStore(storeId, db, "candy_data.csv"); err != nil {
 			return err
 		}
 	}

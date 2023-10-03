@@ -43,7 +43,7 @@ func TestSaveEmployee(t *testing.T) {
 		Name:    name,
 		Phone:   number,
 		Address: address,
-		StoreId: 1,
+		StoreId: "FF",
 	}
 	_, err := employeeStore.Save(&employee)
 	if err != nil {

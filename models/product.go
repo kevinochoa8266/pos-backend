@@ -7,5 +7,5 @@ type Product struct {
 	BulkPrice     int    `json:"bulkPrice"`
 	Inventory     int    `json:"inventory"`
 	ItemsInPacket int    `json:"itemsInPacket"`
-	StoreId       int    `json:"storeId"`
+	StoreId       string    `json:"storeId"`
 }
