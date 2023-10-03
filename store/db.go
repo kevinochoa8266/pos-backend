@@ -77,21 +77,10 @@ func CreateSchema(db *sql.DB) error {
 		return bulkErr
 	}
 
-	_, taxErr := db.Exec(`CREATE TABLE IF NOT EXISTS tax(
-		productId INTEGER,
-		taxRate REAL NOT NULL,
-		taxIncluded TEXT NOT NULL,
-		FOREIGN KEY (productId) REFERENCES product (id)
-		);
-		`)
-	if taxErr != nil {
-		return taxErr
-	}
-
 	_, favErr := db.Exec(`CREATE TABLE IF NOT EXISTS favorite(
-		productId INTEGER,
-		imageUrl TEXT,
-		FOREIGN KEY (productId) REFERENCES product (id)
+		id TEXT,
+		data blob,
+		FOREIGN KEY (id) REFERENCES product (id)
 		);
 		`)
 	if favErr != nil {
