@@ -32,7 +32,7 @@ func CreateSchema(db *sql.DB) error {
 		return err
 	}
 	_, storeErr := db.Exec(`CREATE TABLE IF NOT EXISTS store(
-		id INTEGER PRIMARY KEY,
+		id TEXT PRIMARY KEY,
 		name TEXT NOT NULL,
 		address TEXT
 		);

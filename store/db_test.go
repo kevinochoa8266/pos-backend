@@ -19,7 +19,7 @@ var storeAddress = "123 abc street"
 var productName = "Chocolate"
 var price = 5
 var inventory = 100
-var storeId = 2
+var storeId = "FF"
 
 var db, _ = store.GetConnection(dbUrl)
 

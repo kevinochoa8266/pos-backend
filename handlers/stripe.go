@@ -10,8 +10,6 @@ import (
 	"strconv"
 
 	"github.com/kevinochoa8266/pos-backend/models"
-	"github.com/kevinochoa8266/pos-backend/store"
-	"github.com/joho/godotenv"
 	"github.com/stripe/stripe-go/v75"
 	"github.com/stripe/stripe-go/v75/paymentintent"
 	"github.com/stripe/stripe-go/v75/terminal/location"
@@ -19,50 +17,33 @@ import (
 	readertesthelpers "github.com/stripe/stripe-go/v75/testhelpers/terminal/reader"
 )
 
-func init() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		panic(err)
+func CreateLocation() (string, error) {
+	stripe.Key = "sk_test_51NqoW8GaOHczb63aKSobAndIRCThV0dflaprCSt2l6d0xTzpfje1p7VcfWPWTPwDD9eNPXWaAnHs4nPyc8ewPQK100pqeivsWM"
+
+	shop_location := models.Reader{
+		Address: os.Getenv("STORE_ADDRESS"),
+		City:    os.Getenv("STORE_CITY"),
+		State:   os.Getenv("STORE_STATE"),
+		Country: os.Getenv("STORE_COUNTRY"),
+		Postal:  os.Getenv("STORE_POSTAL"),
+		Name:    os.Getenv("STORE_NAME"),
 	}
-	stripe.Key = os.Getenv("TEST_KEY")
-}
-
-func locationSetup() (*models.Store) {
-	shopStore := store.NewStore(db)
-
-	// put this in the .env variables?
-	id := 1
-	shopId, err := shopStore.Get(id)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return shopId
-}
-
-func HandleCreateLocation(w http.ResponseWriter, r *http.Request) {
-	shopLocation := locationSetup()
 	params := &stripe.TerminalLocationParams{
 		Address: &stripe.AddressParams{
-			Line1:      stripe.String(shopLocation.Address),
-			City:       stripe.String("San Francisco"),
-			State:      stripe.String("CA"),
-			Country:    stripe.String("US"),
-			PostalCode: stripe.String("94110"),
+			Line1:      stripe.String(shop_location.Address),
+			City:       stripe.String(shop_location.City),
+			State:      stripe.String(shop_location.State),
+			Country:    stripe.String(shop_location.Country),
+			PostalCode: stripe.String(shop_location.Postal),
 		},
-		DisplayName: stripe.String(shopLocation.Name),
+		DisplayName: stripe.String(shop_location.Name),
 	}
 
 	l, err := location.New(params)
-
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Printf("location.New: %v", err)
-		return
+		return "", err
 	}
-
-	WriteJSON(w, l)
+	return l.ID, nil
 }
 
 func HandleRegisterReader(w http.ResponseWriter, r *http.Request) {

@@ -1,7 +1,7 @@
 package models
 
 type Employee struct {
-	Id      int
+	Id		int
 	Name    string
 	Phone   string
 	Address string

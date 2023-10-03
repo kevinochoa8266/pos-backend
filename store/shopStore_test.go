@@ -24,14 +24,14 @@ func TestStoreSave(t *testing.T) {
 func TestStoreGet(t *testing.T) {
 	shopStore := store.NewStore(db)
 
-	id := 1
+	id := "FF"
 	_, err := shopStore.Get(id)
 
 	if err != nil {
 		t.Errorf("The store with id: %d was not found.", id)
 	}
 
-	id2 := 100
+	id2 := "XXXXXXX"
 	_, err = shopStore.Get(id2)
 
 	if err == nil {
@@ -57,7 +57,7 @@ func TestStoreGetAll(t *testing.T) {
 func TestStoreUpdate(t *testing.T) {
 	shopStore := store.NewStore(db)
 
-	shop, err := shopStore.Get(3)
+	shop, err := shopStore.Get("FF")
 
 	if err != nil {
 		t.Error("Shop was not retrieved.")
