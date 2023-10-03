@@ -45,6 +45,26 @@ func (is *ImageStore) Get(id string) (*models.Image, error) {
 	return &image, nil
 }
 
+func (is *ImageStore) GetAll() ([]models.Image, error) {
+	query := "SELECT id, data from favorite"
+
+	rows, err := is.db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("query failed to get all images, err: %s", err.Error())
+	}
+	defer rows.Close()
+
+	images := []models.Image{}
+	for rows.Next() {
+		image := models.Image{}
+		if err := rows.Scan(&image.Id, &image.Data); err != nil {
+			return nil, fmt.Errorf("unable to scan image row from the database, err: %s", err.Error())
+		}
+		images = append(images, image)
+	}
+	return images, nil
+}
+
 func (is *ImageStore) Update(image *models.Image) error {
 	query := "UPDATE favorite SET data = ? WHERE id = ?"
 

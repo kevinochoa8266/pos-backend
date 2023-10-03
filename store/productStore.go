@@ -139,6 +139,14 @@ func (ps *ProductStore) Delete(product *models.Product) error {
 			return err
 		}
 	}
+	// check if there is an image attached to it.
+	is := NewImageStore(ps.db)
+	image, _ := is.Get(product.Id)
+	if image != nil {
+		if _, err := is.Delete(image.Id); err != nil {
+			return fmt.Errorf("unable to delete image attached to the product with id %s, err: %s", image.Id, err.Error())
+		}
+	}
 
 	query := "DELETE FROM product WHERE id = ?"
 

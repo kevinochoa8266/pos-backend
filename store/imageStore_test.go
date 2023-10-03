@@ -3,6 +3,7 @@ package store_test
 import (
 	"database/sql"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/kevinochoa8266/pos-backend/models"
@@ -39,6 +40,35 @@ func TestGetImage(t *testing.T) {
 	}
 }
 
+func TestGetAllImages(t *testing.T) {
+	ps := store.NewProductStore(db)
+	for i := 20; i < 23; i++ {
+		product := models.Product{}
+		product.Id = strconv.Itoa(i)
+		product.StoreId = 1
+		if _, err := ps.Save(&product); err != nil {
+			t.Error("unable to save products into db for testing getting images")
+		}
+	}
+
+	for i := 20; i < 23; i++ {
+		image.Id = strconv.Itoa(i)
+		err := imageStore.Save(&image)
+		if err != nil {
+			t.Error("unable to store image into the db")
+		}
+	}
+
+	images, err := imageStore.GetAll()
+	if err != nil {
+		t.Error("unable to retrieve images from the database")
+	}
+
+	if len(images) == 0 {
+		t.Error("expected to get images from the test")
+	}
+}
+
 func TestUpdateImage(t *testing.T) {
 	image.Id = "3"
 	imageStore.Save(&image)
@@ -54,6 +84,8 @@ func TestUpdateImage(t *testing.T) {
 	if err := imageStore.Update(&image); err != sql.ErrNoRows {
 		t.Error("could not update image with id since it does not exist")
 	}
+
+	imageStore.Delete(image.Id)
 }
 
 func TestDeleteImage(t *testing.T) {
