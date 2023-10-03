@@ -34,7 +34,6 @@ func SetupApp() error {
 		return err
 	}
 	if len(stores) == 0 {
-
 		name := os.Getenv("STORE_NAME")
 		address := os.Getenv("STORE_ADDRESS")
 		shop := models.Store{
