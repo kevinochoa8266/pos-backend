@@ -19,7 +19,7 @@ var productStore *store.ProductStore
 var logger = slog.Default()
 
 func init() {
-	dbUrl := "store.db"
+	dbUrl := "../store.db"
 
 	var err error
 
