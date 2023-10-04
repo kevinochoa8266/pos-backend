@@ -17,7 +17,7 @@ var storeName = "XYZ Store"
 var storeAddress = "123 abc street"
 
 var productName = "Chocolate"
-var price = 5
+var price int64 = 5
 var inventory = 100
 var storeId = 2
 
@@ -50,18 +50,17 @@ func init() {
 
 	for i := 1; i < 10; i++ {
 		_, err := ps.Save(&models.Product{
-						Id: strconv.Itoa(i),
-						Name: productName,
-						UnitPrice: price,
-						Inventory: inventory,
-						BulkPrice: price * 5,
-						ItemsInPacket: 10,
-						StoreId: storeId})
+			Id:            strconv.Itoa(i),
+			Name:          productName,
+			UnitPrice:     price,
+			Inventory:     inventory,
+			BulkPrice:     price * 5,
+			ItemsInPacket: 10,
+			StoreId:       storeId})
 		if err != nil {
 			panic(err)
 		}
 	}
-
 
 }
 
