@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
 
@@ -19,7 +21,8 @@ var productStore *store.ProductStore
 var logger = slog.Default()
 
 func init() {
-	dbUrl := "../store.db"
+	godotenv.Load("./.env")
+	dbUrl := os.Getenv("DB_URL")
 
 	var err error
 
