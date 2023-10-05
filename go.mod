@@ -7,7 +7,6 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.7.0
-	github.com/stripe/stripe-go v70.15.0+incompatible
 	github.com/stripe/stripe-go/v75 v75.8.0
 	modernc.org/sqlite v1.25.0
 )
@@ -19,6 +18,7 @@ require (
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+	github.com/stripe/stripe-go v70.15.0+incompatible
 	golang.org/x/mod v0.3.0 // indirect
 	golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab // indirect
 	golang.org/x/tools v0.0.0-20201124115921-2c860bdd6e78 // indirect
