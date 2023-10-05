@@ -11,9 +11,10 @@ func TestStoreSave(t *testing.T) {
 	newStore := store.NewStore(db)
 
 	store := models.Store{
-		Id:      "TR",
-		Name:    "ABC Store",
-		Address: "345 AVE",
+		Id:       "TR",
+		Name:     "ABC Store",
+		Address:  "345 AVE",
+		ReaderId: "AA",
 	}
 
 	_, err := newStore.Save(&store)

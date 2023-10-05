@@ -7,6 +7,7 @@ import (
 	"github.com/kevinochoa8266/pos-backend/store"
 	"github.com/stripe/stripe-go/v75"
 	"github.com/stripe/stripe-go/v75/terminal/location"
+	"github.com/stripe/stripe-go/v75/terminal/reader"
 )
 
 func CreateLocation() (string, error) {
@@ -35,8 +36,28 @@ func CreateLocation() (string, error) {
 	return l.ID, nil
 }
 
+func RegisterReader(locationId string) (string, error) {
+
+	params := &stripe.TerminalReaderParams{
+		Location:         stripe.String(locationId),
+		RegistrationCode: stripe.String("simulated-wpe"),
+	}
+
+	reader, err := reader.New(params)
+	if err != nil {
+		return "", err
+	}
+
+	return reader.ID, nil
+}
+
 func InitializeShop(shop *store.ShopStore) error {
 	locationId, err := CreateLocation()
+	if err != nil {
+		return err
+	}
+
+	readerId, err := RegisterReader(locationId)
 	if err != nil {
 		return err
 	}
@@ -44,9 +65,10 @@ func InitializeShop(shop *store.ShopStore) error {
 	name := os.Getenv("STORE_NAME")
 	address := os.Getenv("STORE_ADDRESS")
 	candyShop := models.Store{
-		Id:      locationId,
-		Name:    name,
-		Address: address,
+		Id:       locationId,
+		Name:     name,
+		Address:  address,
+		ReaderId: readerId,
 	}
 
 	_, err = shop.Save(&candyShop)

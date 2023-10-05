@@ -21,11 +21,12 @@ func (Store ShopStore) Save(store *models.Store) (string, error) {
 	query := `INSERT INTO store (
 				Id,
 				name,
-				address
+				address,
+				readerId
 				)
-				VALUES(?, ?, ?);
+				VALUES(?, ?, ?, ?);
 	`
-	_, err := Store.db.Exec(query, &store.Id, &store.Name, &store.Address)
+	_, err := Store.db.Exec(query, &store.Id, &store.Name, &store.Address, &store.ReaderId)
 	if err != nil {
 		return "", err
 	}
@@ -44,7 +45,7 @@ func (Store ShopStore) Get(id string) (*models.Store, error) {
 
 	shop := models.Store{}
 
-	err := result.Scan(&shop.Id, &shop.Name, &shop.Address)
+	err := result.Scan(&shop.Id, &shop.Name, &shop.Address, &shop.ReaderId)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +67,7 @@ func (Store ShopStore) GetAll() ([]models.Store, error) {
 
 	for result.Next() {
 		shop := models.Store{}
-		err := result.Scan(&shop.Id, &shop.Name, &shop.Address)
+		err := result.Scan(&shop.Id, &shop.Name, &shop.Address, &shop.ReaderId)
 
 		if err != nil {
 			return nil, err
@@ -79,7 +80,7 @@ func (Store ShopStore) GetAll() ([]models.Store, error) {
 func (Store ShopStore) Update(store *models.Store) error {
 	query := `UPDATE store SET Name = ?, Address = ? WHERE Id = ?`
 
-	result, err := Store.db.Exec(query, &store.Name, &store.Address, &store.Id)
+	result, err := Store.db.Exec(query, &store.Name, &store.Address, &store.Id, &store.ReaderId)
 
 	if err != nil {
 		return err

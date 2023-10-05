@@ -14,33 +14,6 @@ import (
 	readertesthelpers "github.com/stripe/stripe-go/v75/testhelpers/terminal/reader"
 )
 
-func HandleRegisterReader(w http.ResponseWriter, r *http.Request) {
-	var req struct {
-		LocationID string `json:"location_id"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Printf("json.NewDecoder.Decode: %v", err)
-		return
-	}
-
-	params := &stripe.TerminalReaderParams{
-		Location:         stripe.String(req.LocationID),
-		RegistrationCode: stripe.String("simulated-wpe"),
-	}
-
-	reader, err := reader.New(params)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Printf("reader.New: %v", err)
-		return
-	}
-
-	WriteJSON(w, reader)
-}
-
 func HandleCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)

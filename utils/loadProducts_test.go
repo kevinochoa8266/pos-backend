@@ -13,7 +13,7 @@ func TestLoadProducts(t *testing.T) {
 
 	store.CreateSchema(db)
 	shopStore := store.NewStore(db)
-	id, err := shopStore.Save(&models.Store{Id: "FF", Name: "testStore", Address: "123 abc"})
+	id, err := shopStore.Save(&models.Store{Id: "FF", Name: "testStore", Address: "123 abc", ReaderId: "AA"})
 	if err != nil {
 		t.Errorf("unable to set up db for testing.")
 	}

@@ -34,7 +34,8 @@ func CreateSchema(db *sql.DB) error {
 	_, storeErr := db.Exec(`CREATE TABLE IF NOT EXISTS store(
 		id TEXT PRIMARY KEY,
 		name TEXT NOT NULL,
-		address TEXT
+		address TEXT,
+		readerId TEXT
 		);
 		`)
 	if storeErr != nil {
