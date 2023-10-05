@@ -7,13 +7,16 @@ import (
 	"github.com/kevinochoa8266/pos-backend/service"
 	"github.com/kevinochoa8266/pos-backend/store"
 	"github.com/kevinochoa8266/pos-backend/utils"
+	"github.com/stripe/stripe-go/v75"
 )
 
 func SetupApp() error {
 	err := godotenv.Load(".env")
 	if err != nil {
-		return err
+		panic(err)
 	}
+	stripe.Key = os.Getenv("TEST_KEY")
+
 	dbUrl := os.Getenv("DB_URL")
 	// Create the schema to the database
 	db, err := store.GetConnection(dbUrl)

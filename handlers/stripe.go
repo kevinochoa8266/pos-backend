@@ -6,45 +6,13 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 
-	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/stripe/stripe-go/v75"
 	"github.com/stripe/stripe-go/v75/paymentintent"
-	"github.com/stripe/stripe-go/v75/terminal/location"
 	"github.com/stripe/stripe-go/v75/terminal/reader"
 	readertesthelpers "github.com/stripe/stripe-go/v75/testhelpers/terminal/reader"
 )
-
-func CreateLocation() (string, error) {
-	stripe.Key = "sk_test_51NqoW8GaOHczb63aKSobAndIRCThV0dflaprCSt2l6d0xTzpfje1p7VcfWPWTPwDD9eNPXWaAnHs4nPyc8ewPQK100pqeivsWM"
-
-	shop_location := models.Reader{
-		Address: os.Getenv("STORE_ADDRESS"),
-		City:    os.Getenv("STORE_CITY"),
-		State:   os.Getenv("STORE_STATE"),
-		Country: os.Getenv("STORE_COUNTRY"),
-		Postal:  os.Getenv("STORE_POSTAL"),
-		Name:    os.Getenv("STORE_NAME"),
-	}
-	params := &stripe.TerminalLocationParams{
-		Address: &stripe.AddressParams{
-			Line1:      stripe.String(shop_location.Address),
-			City:       stripe.String(shop_location.City),
-			State:      stripe.String(shop_location.State),
-			Country:    stripe.String(shop_location.Country),
-			PostalCode: stripe.String(shop_location.Postal),
-		},
-		DisplayName: stripe.String(shop_location.Name),
-	}
-
-	l, err := location.New(params)
-	if err != nil {
-		return "", err
-	}
-	return l.ID, nil
-}
 
 func HandleRegisterReader(w http.ResponseWriter, r *http.Request) {
 	var req struct {
