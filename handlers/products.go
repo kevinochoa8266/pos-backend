@@ -4,30 +4,21 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
-
-	"log/slog"
 )
-
-var db *sql.DB
-var productStore *store.ProductStore
 
 var logger = slog.Default()
 
-func init() {
-	dbUrl := "store.db"
+var productStore *store.ProductStore
 
-	var err error
-
-	db, err = store.GetConnection(dbUrl)
-	if err != nil {
-		panic(err)
-	}
+func SetDatabase(db *sql.DB) {
 	productStore = store.NewProductStore(db)
+	imageStore = store.NewImageStore(db)
 }
 
 func HandleGetProducts(writer http.ResponseWriter, request *http.Request) {

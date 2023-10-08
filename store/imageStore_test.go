@@ -15,7 +15,7 @@ var imageData, _ = os.ReadFile("../snickers.png")
 
 var image = models.Image{Id: "3", Data: imageData}
 
-func TestSave(t *testing.T) {
+func TestSaveImage(t *testing.T) {
 	if err := imageStore.Save(&image); err != nil {
 		t.Errorf("unable to save image for product into the database. err: %s", err.Error())
 	}
@@ -77,6 +77,7 @@ func TestUpdateImage(t *testing.T) {
 		t.Error("unable to load image into the db")
 	}
 	image.Data = nutImage
+	
 	if err := imageStore.Update(&image); err != nil {
 		t.Errorf("unable to update image %s, err: %s", image.Id, err.Error())
 	}

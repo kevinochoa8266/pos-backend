@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/kevinochoa8266/pos-backend/handlers"
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
 	"github.com/kevinochoa8266/pos-backend/utils"
@@ -21,7 +22,6 @@ func SetupApp() error {
 		return err
 	}
 	db.SetMaxOpenConns(3)
-	defer db.Close()
 
 	if err = store.CreateSchema(db); err != nil {
 		return err
@@ -63,5 +63,8 @@ func SetupApp() error {
 			return err
 		}
 	}
+
+	//set up the handler with a db connection
+	handlers.SetDatabase(db)
 	return nil
 }

@@ -19,6 +19,10 @@ func NewImageStore(db *sql.DB) *ImageStore {
 func (is *ImageStore) Save(image *models.Image) error {
 	query := "INSERT INTO favorite (id, data) VALUES(?, ?)"
 
+	if len(image.Data) == 0 {
+		return fmt.Errorf("can not pass in an empty image to the database")
+	}
+
 	result, err := is.db.Exec(query, &image.Id, &image.Data)
 	if err != nil {
 		return fmt.Errorf("failed to insert image into db, err: %s", err.Error())
@@ -68,7 +72,7 @@ func (is *ImageStore) GetAll() ([]models.Image, error) {
 func (is *ImageStore) Update(image *models.Image) error {
 	query := "UPDATE favorite SET data = ? WHERE id = ?"
 
-	_, err := is.db.Exec(query, image.Data, image.Id)
+	_, err := is.db.Exec(query, image.Id, image.Data)
 	if err != nil {
 		return fmt.Errorf("failed to execute update query, err: %s", err.Error())
 	}
@@ -76,8 +80,8 @@ func (is *ImageStore) Update(image *models.Image) error {
 	if err != nil {
 		return sql.ErrNoRows
 	}
-	if !bytes.Equal(image.Data, updatedImage.Data) {
-		return fmt.Errorf("image with id %s was not updated", image.Id)
+	if bytes.Equal(image.Data, updatedImage.Data) {
+		return fmt.Errorf("the image was not successfully updated to the database")
 	}
 	return nil
 }
