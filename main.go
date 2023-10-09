@@ -20,7 +20,7 @@ func main() {
 	log.Println("Starting server at port 8080")
 
 	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(
-		handlers.AllowedOrigins([]string{"http://localhost:4200"}),
+		handlers.AllowedOrigins([]string{"http://127.0.0.1:5500", "http://localhost:4200", "http://127.0.0.1:4200"}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
 		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type"}),
 	)(router)))
