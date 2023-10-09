@@ -11,6 +11,8 @@ func CreateRouter() *mux.Router {
 	router.HandleFunc("/products", handlers.HandleGetProducts).Methods("GET")
 	router.HandleFunc("/products/{id}", handlers.HandleGetProduct).Methods("GET")
 	router.HandleFunc("/products", handlers.HandleAddProduct).Methods("POST")
+	router.HandleFunc("/register_reader", handlers.HandleRegisterReader).Methods("POST")
+	router.HandleFunc("/readers", handlers.HandleGetReaders).Methods("GET")
 
 	return router
 }

@@ -1,17 +1,17 @@
 package service
 
 import (
+	"database/sql"
 	"os"
 
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
 	"github.com/stripe/stripe-go/v75"
 	"github.com/stripe/stripe-go/v75/terminal/location"
-	"github.com/stripe/stripe-go/v75/terminal/reader"
 )
 
-func CreateLocation() (string, error) {
-	reader_location := models.Reader{
+func CreateLocation() (*stripe.TerminalLocation, error) {
+	reader_location := models.Store{
 		Address: os.Getenv("STORE_ADDRESS"),
 		City:    os.Getenv("STORE_CITY"),
 		State:   os.Getenv("STORE_STATE"),
@@ -31,44 +31,43 @@ func CreateLocation() (string, error) {
 	}
 	l, err := location.New(params)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return l.ID, nil
+	return l, nil
 }
 
-func RegisterReader(locationId string) (string, error) {
+func SaveReader(readerId string, locationId string, name string, db *sql.DB) error {
+	newStore := store.NewReaderStore(db)
 
-	params := &stripe.TerminalReaderParams{
-		Location:         stripe.String(locationId),
-		RegistrationCode: stripe.String("simulated-wpe"),
+	reader := models.Reader{
+		Id:         readerId,
+		Name:       name,
+		LocationId: locationId,
 	}
 
-	reader, err := reader.New(params)
+	_, err := newStore.Save(&reader)
+
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return reader.ID, nil
+	return nil
 }
 
 func InitializeShop(shop *store.ShopStore) error {
-	locationId, err := CreateLocation()
+	location, err := CreateLocation()
 	if err != nil {
 		return err
 	}
 
-	readerId, err := RegisterReader(locationId)
-	if err != nil {
-		return err
-	}
-
-	name := os.Getenv("STORE_NAME")
-	address := os.Getenv("STORE_ADDRESS")
 	candyShop := models.Store{
-		Id:       locationId,
-		Name:     name,
-		Address:  address,
-		ReaderId: readerId,
+		Id:      location.ID,
+		Address: location.Address.Line1,
+		City:    location.Address.City,
+		State:   location.Address.State,
+		Country: location.Address.Country,
+		Postal:  location.Address.PostalCode,
+		Name:    location.DisplayName,
 	}
 
 	_, err = shop.Save(&candyShop)

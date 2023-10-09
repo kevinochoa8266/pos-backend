@@ -37,7 +37,7 @@ func SetupApp() error {
 		return err
 	}
 	if len(stores) == 0 {
-		service.InitializeShop(&shopStore)
+		service.InitializeShop(shopStore)
 	}
 	productStore := store.NewProductStore(db)
 
