@@ -11,6 +11,7 @@ func TestStoreSave(t *testing.T) {
 	newStore := store.NewStore(db)
 
 	store := models.Store{
+		Id:      "TR",
 		Name:    "ABC Store",
 		Address: "345 AVE",
 	}
@@ -24,18 +25,18 @@ func TestStoreSave(t *testing.T) {
 func TestStoreGet(t *testing.T) {
 	shopStore := store.NewStore(db)
 
-	id := 1
+	id := "FF"
 	_, err := shopStore.Get(id)
 
 	if err != nil {
-		t.Errorf("The store with id: %d was not found.", id)
+		t.Errorf("The store with id: %s was not found.", id)
 	}
 
-	id2 := 100
+	id2 := "XXXXXXX"
 	_, err = shopStore.Get(id2)
 
 	if err == nil {
-		t.Errorf("was not supposed to retrieve a store with the id: %d", id2)
+		t.Errorf("was not supposed to retrieve a store with the id: %s", id2)
 	}
 
 }
@@ -57,7 +58,7 @@ func TestStoreGetAll(t *testing.T) {
 func TestStoreUpdate(t *testing.T) {
 	shopStore := store.NewStore(db)
 
-	shop, err := shopStore.Get(3)
+	shop, err := shopStore.Get("FF")
 
 	if err != nil {
 		t.Error("Shop was not retrieved.")
@@ -68,9 +69,10 @@ func TestStoreUpdate(t *testing.T) {
 	err = shopStore.Update(shop)
 
 	if err != nil {
-		t.Errorf("could not update store with id: %d", shop.Id)
+		t.Errorf("could not update store with id: %s", shop.Id)
 	}
 }
+
 // TODO: This needs to also remove all rows that have a foreign key that reference the given store.
 // func TestStoreDelete(t *testing.T) {
 // 	shopStore := store.NewStore(db)

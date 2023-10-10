@@ -19,7 +19,7 @@ var storeAddress = "123 abc street"
 var productName = "Chocolate"
 var price int64 = 5
 var inventory = 100
-var storeId = 2
+var storeId = "FF"
 
 var db, _ = store.GetConnection(dbUrl)
 
@@ -29,19 +29,22 @@ func init() {
 		panic(err)
 	}
 
-	storeQuery := "INSERT INTO store (name, address) VALUES(?, ?)"
-
-	for i := 0; i < 3; i++ {
-		_, err := db.Exec(storeQuery, storeName, storeAddress)
-		if err != nil {
-			panic(err)
-		}
+	query := `INSERT INTO store (
+				Id,
+				name,
+				address
+				)
+				VALUES(?, ?, ?);
+	`
+	_, err = db.Exec(query, storeId, storeName, storeAddress)
+	if err != nil {
+		panic(err)
 	}
 
 	employeeQuery := "INSERT INTO employee (fullName, phoneNumber, address, storeId) VALUES(?, ?, ?, ?);"
 
 	for i := 0; i < 3; i++ {
-		_, err := db.Exec(employeeQuery, name, number, address, 1)
+		_, err := db.Exec(employeeQuery, name, number, address, storeId)
 		if err != nil {
 			panic(err)
 		}

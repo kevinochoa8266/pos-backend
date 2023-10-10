@@ -1,7 +1,7 @@
 package models
 
 type Store struct {
-	Id      int
+	Id      string
 	Name    string
 	Address string
 }

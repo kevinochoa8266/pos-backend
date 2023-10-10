@@ -12,7 +12,7 @@ import (
 	"github.com/kevinochoa8266/pos-backend/store"
 )
 
-func LoadProductsIntoStore(storeId int64, db *sql.DB, path string) error {
+func LoadProductsIntoStore(storeId string, db *sql.DB, path string) error {
 	f, err := os.Open(path)
 	if err != nil {
 		return err
@@ -32,7 +32,7 @@ func LoadProductsIntoStore(storeId int64, db *sql.DB, path string) error {
 		if err != nil {
 			panic(err)
 		}
-		product.StoreId = int(storeId)
+		product.StoreId = storeId
 		if _, err = ps.Save(product); err != nil {
 			return fmt.Errorf("product (%s, %s) could not be saved: %s",
 				product.Id,
