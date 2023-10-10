@@ -17,7 +17,7 @@ var storeName = "XYZ Store"
 var storeAddress = "123 abc street"
 
 var productName = "Chocolate"
-var price = 5
+var price int64 = 5
 var inventory = 100
 var storeId = "FF"
 

@@ -4,12 +4,12 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/kevinochoa8266/pos-backend/app"
 	"github.com/kevinochoa8266/pos-backend/router"
 )
 
 func main() {
-
 	err := app.SetupApp()
 	if err != nil {
 		panic(err)
@@ -18,12 +18,10 @@ func main() {
 	router := router.CreateRouter()
 
 	log.Println("Starting server at port 8080")
-	log.Fatal(http.ListenAndServe(":8080", jsonContentTypeMiddleWare(router)))
-}
 
-func jsonContentTypeMiddleWare(handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		handler.ServeHTTP(w, r)
-	})
+	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(
+		handlers.AllowedOrigins([]string{"http://127.0.0.1:5500", "http://localhost:4200", "http://127.0.0.1:4200"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
+		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type"}),
+	)(router)))
 }
