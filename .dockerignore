@@ -1,0 +1,7 @@
+*.csv
+*.github
+.gitignore
+*.png
+makefile
+.vscode
+Dockerfile
