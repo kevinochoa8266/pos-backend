@@ -45,7 +45,7 @@ func TestGetAllImages(t *testing.T) {
 	for i := 20; i < 23; i++ {
 		product := models.Product{}
 		product.Id = strconv.Itoa(i)
-		product.StoreId = 1
+		product.StoreId = "FF"
 		if _, err := ps.Save(&product); err != nil {
 			t.Error("unable to save products into db for testing getting images")
 		}
@@ -77,7 +77,7 @@ func TestUpdateImage(t *testing.T) {
 		t.Error("unable to load image into the db")
 	}
 	image.Data = nutImage
-	
+
 	if err := imageStore.Update(&image); err != nil {
 		t.Errorf("unable to update image %s, err: %s", image.Id, err.Error())
 	}
