@@ -27,7 +27,7 @@ func (ps *ProductStore) Save(product *models.Product) (string, error) {
 			VALUES(?,?,?,?,?)`
 	result, err := ps.db.Exec(query, &product.Id, &product.Name, &product.BulkPrice, &product.Inventory, &product.StoreId)
 	if err != nil {
-		return "", fmt.Errorf("error occurred saving %s into the database. %s", product.Name, err.Error())
+		return "", fmt.Errorf("error occurred saving %s into the database, err: %s", product.Name, err.Error())
 	}
 	affectedRows, err := result.RowsAffected()
 
@@ -56,7 +56,7 @@ func (ps *ProductStore) Get(id string) (*models.Product, error) {
 	if row.Err() != nil {
 		return nil, row.Err()
 	}
-	var unitPrice sql.NullInt16
+	var unitPrice sql.NullInt64
 	var itemsInPacket sql.NullInt16
 	err := row.Scan(&product.Id, &product.Name, &unitPrice, &product.BulkPrice, &product.Inventory, &itemsInPacket, &product.StoreId)
 	if err != nil {
@@ -64,7 +64,7 @@ func (ps *ProductStore) Get(id string) (*models.Product, error) {
 	}
 
 	if unitPrice.Valid {
-		product.UnitPrice = int(unitPrice.Int16)
+		product.UnitPrice = unitPrice.Int64
 		product.ItemsInPacket = int(itemsInPacket.Int16)
 	}
 
@@ -86,7 +86,7 @@ func (ps *ProductStore) GetAll() ([]models.Product, error) {
 	for rows.Next() {
 		product := models.Product{}
 
-		var unitPrice sql.NullInt16
+		var unitPrice sql.NullInt64
 		var itemsInPacket sql.NullInt16
 
 		err := rows.Scan(&product.Id, &product.Name, &unitPrice, &product.BulkPrice, &product.Inventory, &itemsInPacket, &product.StoreId)
@@ -94,7 +94,7 @@ func (ps *ProductStore) GetAll() ([]models.Product, error) {
 			return nil, err
 		}
 		if unitPrice.Valid {
-			product.UnitPrice = int(unitPrice.Int16)
+			product.UnitPrice = unitPrice.Int64
 			product.ItemsInPacket = int(itemsInPacket.Int16)
 		}
 
@@ -112,7 +112,7 @@ func (ps *ProductStore) Update(product *models.Product) error {
 	result, err := ps.db.Exec(query, product.StoreId, product.Name, product.UnitPrice,
 		product.Inventory, product.Id)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to process query to update product, err: %s", err.Error())
 	}
 	affectedRows, err := result.RowsAffected()
 	if err != nil || affectedRows != 1 {
@@ -137,6 +137,14 @@ func (ps *ProductStore) Delete(product *models.Product) error {
 	if product.UnitPrice != 0 {
 		if err := ps.DeleteBulkRow(product.Id); err != nil {
 			return err
+		}
+	}
+	// check if there is an image attached to it.
+	is := NewImageStore(ps.db)
+	image, _ := is.Get(product.Id)
+	if image != nil {
+		if _, err := is.Delete(image.Id); err != nil {
+			return fmt.Errorf("unable to delete image attached to the product with id %s, err: %s", image.Id, err.Error())
 		}
 	}
 
@@ -166,7 +174,7 @@ func (ps *ProductStore) DeleteBulkRow(id string) error {
 	return nil
 }
 
-func (ps *ProductStore) AddIndividualPrice(id string, unitPrice int, bulkQuantity int) error {
+func (ps *ProductStore) AddIndividualPrice(id string, unitPrice int64, bulkQuantity int) error {
 	query := "INSERT INTO bulk (productId, unitPrice, itemsInPacket) VALUES (?,?,?)"
 
 	result, err := ps.db.Exec(query, id, unitPrice, bulkQuantity)

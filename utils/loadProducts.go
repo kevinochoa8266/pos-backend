@@ -51,15 +51,15 @@ func extractProduct(l []string) (*models.Product, error) {
 	taxDecimal := float32(tax) / 100.0
 	taxApplied, _ := strconv.ParseBool(l[3])
 	product.Inventory, _ = strconv.Atoi(l[4])
-	product.BulkPrice, _ = strconv.Atoi(l[5])
-	product.UnitPrice, _ = strconv.Atoi(l[6])
+	product.BulkPrice, _ = strconv.ParseInt(l[5], 10, 64)
+	product.UnitPrice, _ = strconv.ParseInt(l[6], 10, 64)
 	product.ItemsInPacket, _ = strconv.Atoi(l[7])
 
 	if tax != 0 && !taxApplied {
-		var taxPrice float32 = float32(product.BulkPrice) * taxDecimal
-		product.BulkPrice += int(taxPrice)
+		var taxPrice = float32(product.BulkPrice) * taxDecimal
+		product.BulkPrice = int64(product.BulkPrice + int64(taxPrice))
 		if product.UnitPrice != 0 {
-			product.UnitPrice += int(taxPrice)
+			product.UnitPrice += int64(taxPrice)
 		}
 	}
 

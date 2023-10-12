@@ -2,6 +2,8 @@ package store
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
 
 	"github.com/kevinochoa8266/pos-backend/models"
 )
@@ -22,11 +24,11 @@ func (Reader *ReaderStore) Save(reader *models.Reader) (string, error) {
 				)
 				VALUES(?, ?, ?);
 	`
-	_, err := Reader.db.Exec(query, &reader.Id, &reader.Name, &reader.LocationId)
+	result, err := Reader.db.Exec(query, &reader.Id, &reader.Name, &reader.LocationId)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("query failed to save reader to database, errors: %s", err)
 	}
-
+	rowsAffected, _ := result.RowsAffected(); if rowsAffected != 1 {return "", errors.New("failed to insert reader into database")}
 	return reader.Id, nil
 }
 

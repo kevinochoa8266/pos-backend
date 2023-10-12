@@ -92,8 +92,8 @@ func CreateSchema(db *sql.DB) error {
 	}
 
 	_, favErr := db.Exec(`CREATE TABLE IF NOT EXISTS favorite(
-		id TEXT,
-		data blob,
+		id TEXT PRIMARY KEY,
+		data BLOB,
 		FOREIGN KEY (id) REFERENCES product (id)
 		);
 		`)

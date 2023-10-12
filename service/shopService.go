@@ -2,13 +2,17 @@ package service
 
 import (
 	"database/sql"
+	"fmt"
 	"os"
 
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
 	"github.com/stripe/stripe-go/v75"
 	"github.com/stripe/stripe-go/v75/terminal/location"
+	"github.com/stripe/stripe-go/v75/terminal/reader"
 )
+
+var db *sql.DB
 
 func CreateLocation() (*stripe.TerminalLocation, error) {
 	reader_location := models.Store{
@@ -36,16 +40,20 @@ func CreateLocation() (*stripe.TerminalLocation, error) {
 	return l, nil
 }
 
-func SaveReader(readerId string, locationId string, name string, db *sql.DB) error {
-	newStore := store.NewReaderStore(db)
+func SaveReader(params *stripe.TerminalReaderParams, readerStore *store.ReaderStore) error {
 
-	reader := models.Reader{
-		Id:         readerId,
-		Name:       name,
-		LocationId: locationId,
+	reader, err := reader.New(params)
+	if err != nil {
+		return fmt.Errorf("unable to create a new reader, error: %s", err.Error())
 	}
 
-	_, err := newStore.Save(&reader)
+	storedReader := models.Reader{
+		Id:         reader.ID,
+		Name:       reader.Label,
+		LocationId: reader.Location.ID,
+	}
+
+	_, err = readerStore.Save(&storedReader)
 
 	if err != nil {
 		return err

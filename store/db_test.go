@@ -22,7 +22,7 @@ var storePostal = "050037"
 var storeName = "XYZ Store"
 
 var productName = "Chocolate"
-var price = 5
+var price int64 = 5
 var inventory = 100
 
 var db, _ = store.GetConnection(dbUrl)

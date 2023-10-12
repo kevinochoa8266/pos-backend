@@ -1,6 +1,6 @@
 package models
 
 type Image struct {
-	Id   string
-	Data []byte
+	Id   string `json:"id"`
+	Data []byte `json:"data"`
 }
