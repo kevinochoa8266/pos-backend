@@ -13,13 +13,17 @@ var name = "John"
 var number = "9417160432"
 var address = "123 abc"
 
-var storeName = "XYZ Store"
+var storeId = "FF"
 var storeAddress = "123 abc street"
+var storeCity = "Medellin"
+var storeState = "Antioquia"
+var storeCountry = "CO"
+var storePostal = "050037"
+var storeName = "XYZ Store"
 
 var productName = "Chocolate"
 var price int64 = 5
 var inventory = 100
-var storeId = "FF"
 
 var db, _ = store.GetConnection(dbUrl)
 
@@ -31,12 +35,16 @@ func init() {
 
 	query := `INSERT INTO store (
 				Id,
-				name,
-				address
+				address,
+				city,
+				state,
+				country,
+				postal,
+				name
 				)
-				VALUES(?, ?, ?);
+				VALUES(?, ?, ?, ?, ?, ?, ?);
 	`
-	_, err = db.Exec(query, storeId, storeName, storeAddress)
+	_, err = db.Exec(query, storeId, storeAddress, storeCity, storeState, storeCountry, storePostal, storeName)
 	if err != nil {
 		panic(err)
 	}

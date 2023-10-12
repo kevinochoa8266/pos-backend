@@ -31,13 +31,13 @@ func SetupApp() error {
 	}
 
 	// Check if a store exists.
-	shopStore := store.NewStore(db)
+	shopStore := store.NewShopStore(db)
 	stores, err := shopStore.GetAll()
 	if err != nil {
 		return err
 	}
 	if len(stores) == 0 {
-		service.InitializeShop(&shopStore)
+		service.InitializeShop(shopStore)
 	}
 	productStore := store.NewProductStore(db)
 

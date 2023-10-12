@@ -19,6 +19,8 @@ var productStore *store.ProductStore
 func SetDatabase(db *sql.DB) {
 	productStore = store.NewProductStore(db)
 	imageStore = store.NewImageStore(db)
+	shopStore = store.NewShopStore(db)
+	readerStore = store.NewReaderStore(db)
 }
 
 func HandleGetProducts(writer http.ResponseWriter, request *http.Request) {

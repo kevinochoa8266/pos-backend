@@ -18,6 +18,8 @@ func CreateRouter() *mux.Router {
 	router.HandleFunc("/images/{id}", handlers.HandleSaveImage).Methods("POST")
 	router.HandleFunc("/images/{id}", handlers.HandleUpdateImage).Methods("PUT")
 	router.HandleFunc("/images/{id}", handlers.HandleDeleteImage).Methods("DELETE")
+	router.HandleFunc("/readers", handlers.HandleRegisterReader).Methods("POST")
+	router.HandleFunc("/readers", handlers.HandleGetReaders).Methods("GET")
 
 	return router
 }

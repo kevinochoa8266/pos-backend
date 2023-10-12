@@ -33,12 +33,26 @@ func CreateSchema(db *sql.DB) error {
 	}
 	_, storeErr := db.Exec(`CREATE TABLE IF NOT EXISTS store(
 		id TEXT PRIMARY KEY,
-		name TEXT NOT NULL,
-		address TEXT
+		address TEXT NOT NULL,
+		city TEXT,
+		state TEXT,
+		country TEXT,
+		postal TEXT,
+		name TEXT
 		);
 		`)
 	if storeErr != nil {
 		return storeErr
+	}
+	_, readerErr := db.Exec(`CREATE TABLE IF NOT EXISTS reader(
+		id TEXT PRIMARY KEY,
+		name TEXT,
+		locationId TEXT,
+		FOREIGN KEY (locationId) REFERENCES store (id) 
+		);
+		`)
+	if readerErr != nil {
+		return readerErr
 	}
 	_, empErr := db.Exec(`CREATE TABLE IF NOT EXISTS employee(
 		id INTEGER PRIMARY KEY,
