@@ -11,8 +11,8 @@ func TestReaderSave(t *testing.T) {
 	newStore := store.NewReaderStore(db)
 
 	reader := models.Reader{
-		Id: "XZY",
-		Name: "reader-one",
+		Id:         "XZY",
+		Name:       "reader-one",
 		LocationId: "FF",
 	}
 
@@ -25,8 +25,8 @@ func TestReaderSave(t *testing.T) {
 func TestReaderGetAll(t *testing.T) {
 	newStore := store.NewReaderStore(db)
 	reader := models.Reader{
-		Id: "XZY",
-		Name: "reader-one",
+		Id:         "abc",
+		Name:       "reader-one",
 		LocationId: "FF",
 	}
 

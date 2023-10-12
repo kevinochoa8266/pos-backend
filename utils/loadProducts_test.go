@@ -12,7 +12,7 @@ func TestLoadProducts(t *testing.T) {
 	db, _ := store.GetConnection(":memory:")
 
 	store.CreateSchema(db)
-	shopStore := store.NewStore(db)
+	shopStore := store.NewShopStore(db)
 	id, err := shopStore.Save(&models.Store{Id: "FF", Name: "testStore", Address: "123 abc", City: "miami",
 		State: "FL", Country: "USA", Postal: "33177"})
 	if err != nil {

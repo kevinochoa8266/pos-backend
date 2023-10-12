@@ -13,7 +13,7 @@ type ShopStore struct {
 	db *sql.DB
 }
 
-func NewStore(db *sql.DB) *ShopStore {
+func NewShopStore(db *sql.DB) *ShopStore {
 	return &ShopStore{db: db}
 }
 

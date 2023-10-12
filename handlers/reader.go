@@ -12,7 +12,7 @@ import (
 )
 
 func HandleRegisterReader(w http.ResponseWriter, r *http.Request) {
-	shopStore := store.NewStore(db)
+	shopStore := store.NewShopStore(db)
 	stores, err := shopStore.GetAll()
 	if err != nil {
 		panic(err)
