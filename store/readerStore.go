@@ -26,9 +26,12 @@ func (Reader *ReaderStore) Save(reader *models.Reader) (string, error) {
 	`
 	result, err := Reader.db.Exec(query, &reader.Id, &reader.Name, &reader.LocationId)
 	if err != nil {
-		return "", fmt.Errorf("query failed to save reader to database, errors: %s", err)
+		return "", fmt.Errorf("query failed to save reader to database, errors: %s", err.Error())
 	}
-	rowsAffected, _ := result.RowsAffected(); if rowsAffected != 1 {return "", errors.New("failed to insert reader into database")}
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected != 1 {
+		return "", errors.New("failed to insert reader into database")
+	}
 	return reader.Id, nil
 }
 
@@ -38,7 +41,7 @@ func (Reader *ReaderStore) GetAll() ([]models.Reader, error) {
 	result, err := Reader.db.Query(query)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("query failed to fetch all readers from the database, error: %s", err.Error())
 	}
 
 	defer result.Close()
@@ -50,7 +53,7 @@ func (Reader *ReaderStore) GetAll() ([]models.Reader, error) {
 		err := result.Scan(&reader.Id, &reader.Name, &reader.LocationId)
 
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("unable to parse a row, err: %s", err.Error())
 		}
 		readers = append(readers, reader)
 	}
