@@ -3,11 +3,10 @@ package store
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/kevinochoa8266/pos-backend/models"
 )
-
-var errEmployeeNotFound = errors.New("employee with id is not found")
 
 type EmployeeStore struct {
 	db *sql.DB
@@ -28,7 +27,7 @@ func (employeeStore *EmployeeStore) Save(employee *models.Employee) (int64, erro
 	`
 	result, err := employeeStore.db.Exec(query, &employee.Name, &employee.Phone, &employee.Address, &employee.StoreId)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("unable to save employee into database, error: %s", err.Error())
 	}
 
 	id, err := result.LastInsertId()
@@ -44,13 +43,13 @@ func (employeeStore *EmployeeStore) Get(id int) (*models.Employee, error) {
 	`
 	row := employeeStore.db.QueryRow(query, id)
 	if row.Err() != nil {
-		return nil, errEmployeeNotFound
+		return nil, fmt.Errorf("unable to fetch employee with id: %d, error: %s", id, row.Err().Error())
 	}
 	employee := models.Employee{}
 
 	err := row.Scan(&employee.Id, &employee.Name, &employee.Phone, &employee.Address, &employee.StoreId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to parse a row, err: %s", err.Error())
 	}
 	return &employee, nil
 }
@@ -61,7 +60,7 @@ func (employeeStore *EmployeeStore) GetAll() ([]models.Employee, error) {
 	`
 	rows, err := employeeStore.db.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to fetch all employees from database, error: %s", err.Error())
 	}
 	defer rows.Close()
 	employees := []models.Employee{}
@@ -70,7 +69,7 @@ func (employeeStore *EmployeeStore) GetAll() ([]models.Employee, error) {
 		employee := models.Employee{}
 		err := rows.Scan(&employee.Id, &employee.Name, &employee.Phone, &employee.Address, &employee.StoreId)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("unable to parse a row, err: %s", err.Error())
 		}
 		employees = append(employees, employee)
 	}
@@ -86,7 +85,7 @@ func (employeeStore *EmployeeStore) Update(employee *models.Employee) error {
 	result, err := employeeStore.db.Exec(query, &employee.Name, &employee.Phone,
 		employee.Address, employee.StoreId, employee.Id)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to update employee in database with id: %d, error: %s", employee.Id, err.Error())
 	}
 	rowsUpdated, err := result.RowsAffected()
 	if err != nil || rowsUpdated != 1 {
@@ -101,7 +100,7 @@ func (employeeStore *EmployeeStore) Delete(id int) error {
 	`
 	result, err := employeeStore.db.Exec(query, id)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to delete employee in database with id: %d, error: %s", id, err.Error())
 	}
 	rowsDeleted, err := result.RowsAffected()
 	if err != nil || rowsDeleted != 1 {
