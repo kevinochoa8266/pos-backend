@@ -20,6 +20,7 @@ func CreateRouter() *mux.Router {
 	router.HandleFunc("/images/{id}", handlers.HandleDeleteImage).Methods("DELETE")
 	router.HandleFunc("/readers", handlers.HandleRegisterReader).Methods("POST")
 	router.HandleFunc("/readers", handlers.HandleGetReaders).Methods("GET")
+	router.HandleFunc("/payments", handlers.HandleTransaction).Methods("POST")
 
 	return router
 }

@@ -15,13 +15,13 @@ var orderStore = store.NewOrderStore(db)
 
 func TestSaveOrder(t *testing.T) {
 	order := models.Order{
-		Id:           uuid.New(),
-		ProductId:    "1",
-		CustomerId:   0,
-		Date:         time.Now(),
-		BoughtInBulk: false,
-		Quantity:     5,
-		TotalPrice:   4500,
+		Id:                     uuid.New(),
+		ProductId:              "1",
+		CustomerId:             0,
+		Date:                   time.Now(),
+		BoughtInBulk:           false,
+		Quantity:               5,
+		ProductPriceAtPurchase: 4500,
 	}
 
 	err := orderStore.Save(&order)
@@ -38,12 +38,12 @@ func TestSaveOrder(t *testing.T) {
 
 func TestGetOrders(t *testing.T) {
 	order := models.Order{
-		Id:         uuid.New(),
-		ProductId:  "1",
-		CustomerId: 0,
-		Date:       time.Now(),
-		Quantity:   5,
-		TotalPrice: 4500,
+		Id:                     uuid.New(),
+		ProductId:              "1",
+		CustomerId:             0,
+		Date:                   time.Now(),
+		Quantity:               5,
+		ProductPriceAtPurchase: 4500,
 	}
 
 	for i := 0; i < 2; i++ {
@@ -66,13 +66,13 @@ func TestGetOrders(t *testing.T) {
 func TestGetOrder(t *testing.T) {
 
 	order := models.Order{
-		Id:           uuid.New(),
-		ProductId:    "6",
-		CustomerId:   0,
-		Date:         time.Now(),
-		BoughtInBulk: false,
-		Quantity:     5,
-		TotalPrice:   4500,
+		Id:                     uuid.New(),
+		ProductId:              "6",
+		CustomerId:             0,
+		Date:                   time.Now(),
+		BoughtInBulk:           false,
+		Quantity:               5,
+		ProductPriceAtPurchase: 4500,
 	}
 
 	for i := 0; i < 3; i++ {

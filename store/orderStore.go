@@ -24,7 +24,7 @@ func (os *OrderStore) Save(order *models.Order) error {
 		order.CustomerId,
 		order.Date,
 		order.Quantity,
-		order.TotalPrice)
+		order.ProductPriceAtPurchase)
 	if err != nil {
 		return fmt.Errorf("unable to perform insert of order. err: %s", err.Error())
 	}
@@ -49,7 +49,7 @@ func (os *OrderStore) GetOrders() ([]models.Order, error) {
 		order := models.Order{}
 
 		err := rows.Scan(&order.Id, &order.ProductId,
-			&order.CustomerId, &order.Date, &order.Quantity, &order.TotalPrice)
+			&order.CustomerId, &order.Date, &order.Quantity, &order.ProductPriceAtPurchase)
 		if err != nil {
 			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
 		}
@@ -72,7 +72,7 @@ func (os *OrderStore) GetOrder(id string) ([]models.Order, error) {
 		order := models.Order{}
 
 		err := rows.Scan(&order.Id, &order.ProductId,
-			&order.CustomerId, &order.Date, &order.Quantity, &order.TotalPrice)
+			&order.CustomerId, &order.Date, &order.Quantity, &order.ProductPriceAtPurchase)
 		if err != nil {
 			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
 		}
