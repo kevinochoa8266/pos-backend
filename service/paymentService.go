@@ -18,13 +18,13 @@ func TransactionProcess(params *stripe.PaymentIntentParams, payment models.Payme
 		return "", fmt.Errorf("unable to create a new payment intent, error: %s", err.Error())
 	}
 
-	err = ProcessPayment(payment.ReaderId, pi.ID)
+	err = processPayment(payment.ReaderId, pi.ID)
 
 	if err != nil {
 		return "", err
 	}
 
-	resp, err := SimulatePayment(payment.ReaderId)
+	resp, err := simulatePayment(payment.ReaderId)
 
 	if err != nil {
 		return "", err
@@ -32,7 +32,7 @@ func TransactionProcess(params *stripe.PaymentIntentParams, payment models.Payme
 	return resp, nil
 }
 
-func ProcessPayment(readerId string, paymentIntentId string) error {
+func processPayment(readerId string, paymentIntentId string) error {
 
 	params := &stripe.TerminalReaderProcessPaymentIntentParams{
 		PaymentIntent: stripe.String(paymentIntentId),
@@ -46,9 +46,10 @@ func ProcessPayment(readerId string, paymentIntentId string) error {
 	return nil
 }
 
-func SimulatePayment(readerId string) (string, error) {
+func simulatePayment(readerId string) (string, error) {
 
-	params := &stripe.TestHelpersTerminalReaderPresentPaymentMethodParams{}
+	params := &stripe.TestHelpersTerminalReaderPresentPaymentMethodParams{
+	}
 	resp, err := readertesthelpers.PresentPaymentMethod(readerId, params)
 
 	if err != nil {
@@ -56,13 +57,3 @@ func SimulatePayment(readerId string) (string, error) {
 	}
 	return string(resp.Action.Status), nil
 }
-
-// func CapturePayment(paymentIntentId string) {
-
-// 	_, err := paymentintent.Capture(paymentIntentId, nil)
-
-// 	if err != nil {
-// 		fmt.Errorf("unable to capture the payment with Id: %s, error: %s", paymentIntentId, err.Error())
-// 	}
-
-// }
