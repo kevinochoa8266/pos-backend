@@ -55,5 +55,10 @@ func simulatePayment(readerId string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("the reader: %s was unable to simulate the payment, error: %s", readerId, err.Error())
 	}
-	return string(resp.Action.Status), nil
+
+	if resp.Action.Status == "failed" {
+		return string(resp.Action.Status), fmt.Errorf("failure message: %s", resp.Action.FailureMessage)
+	} else {
+		return string(resp.Action.Status), nil
+	}
 }
