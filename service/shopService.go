@@ -1,7 +1,6 @@
 package service
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
 
@@ -11,8 +10,6 @@ import (
 	"github.com/stripe/stripe-go/v75/terminal/location"
 	"github.com/stripe/stripe-go/v75/terminal/reader"
 )
-
-var db *sql.DB
 
 func CreateLocation() (*stripe.TerminalLocation, error) {
 	reader_location := models.Store{

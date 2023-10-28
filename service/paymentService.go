@@ -2,15 +2,25 @@ package service
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/kevinochoa8266/pos-backend/models"
+	"github.com/kevinochoa8266/pos-backend/store"
 	"github.com/stripe/stripe-go/v75"
 	"github.com/stripe/stripe-go/v75/paymentintent"
 	"github.com/stripe/stripe-go/v75/terminal/reader"
 	readertesthelpers "github.com/stripe/stripe-go/v75/testhelpers/terminal/reader"
 )
 
-func TransactionProcess(params *stripe.PaymentIntentParams, payment models.Payment) (string, error) {
+/*
+1. Save the order in the DB once the payment is successful
+   * The order table does not create boughtInBulk but the models.order does, ask tony.
+2. Send email reciepts to customers
+3. Update inventory after payment is successful
+4. Create customer with stripe and save them in our db
+*/
+
+func TransactionProcess(params *stripe.PaymentIntentParams, payment models.Payment, order *store.OrderStore) (string, error) {
 
 	pi, err := paymentintent.New(params)
 
@@ -28,6 +38,13 @@ func TransactionProcess(params *stripe.PaymentIntentParams, payment models.Payme
 
 	if err != nil {
 		return "", err
+	}
+
+	if resp == "succeeded" {
+		err = SaveOrder(pi.ID, pi.Created, payment, order)
+		if err != nil {
+			return resp, err //Let anthony know that I still want the transaction to be successful even if the order is unable to save.
+		}
 	}
 	return resp, nil
 }
@@ -48,8 +65,7 @@ func processPayment(readerId string, paymentIntentId string) error {
 
 func simulatePayment(readerId string) (string, error) {
 
-	params := &stripe.TestHelpersTerminalReaderPresentPaymentMethodParams{
-	}
+	params := &stripe.TestHelpersTerminalReaderPresentPaymentMethodParams{}
 	resp, err := readertesthelpers.PresentPaymentMethod(readerId, params)
 
 	if err != nil {
@@ -61,4 +77,25 @@ func simulatePayment(readerId string) (string, error) {
 	} else {
 		return string(resp.Action.Status), nil
 	}
+}
+
+func SaveOrder(paymentId string, date int64, payment models.Payment, orderStore *store.OrderStore) error {
+	orderLen := len(payment.Products)
+
+	for i := 0; i < orderLen; i++ {
+		newOrder := models.Order{
+			Id:                     paymentId,
+			ProductId:              payment.Products[i].ProductId,
+			CustomerId:             payment.CustomerId,
+			Date:                   time.Unix(date, 0),
+			BoughtInBulk:           payment.Products[i].BoughtInBulk,
+			Quantity:               payment.Products[i].Quantity,
+			ProductPriceAtPurchase: payment.Products[i].Price,
+		}
+		err := orderStore.Save(&newOrder)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

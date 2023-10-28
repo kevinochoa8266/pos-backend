@@ -16,7 +16,7 @@ func NewOrderStore(db *sql.DB) *OrderStore {
 }
 
 func (os *OrderStore) Save(order *models.Order) error {
-	query := "INSERT INTO orders (id, productId, customerId, date, quantity, totalPrice) VALUES(?,?,?,?,?,?)"
+	query := "INSERT INTO orders (id, productId, customerId, date, quantity, productPriceAtPurchase) VALUES(?,?,?,?,?,?)"
 
 	result, err := os.db.Exec(query,
 		order.Id,
@@ -36,7 +36,7 @@ func (os *OrderStore) Save(order *models.Order) error {
 }
 
 func (os *OrderStore) GetOrders() ([]models.Order, error) {
-	query := "SELECT id, productId, customerId, date, quantity, totalPrice FROM orders"
+	query := "SELECT id, productId, customerId, date, quantity, productPriceAtPurchase FROM orders"
 
 	rows, err := os.db.Query(query)
 	if err != nil {
@@ -59,7 +59,7 @@ func (os *OrderStore) GetOrders() ([]models.Order, error) {
 }
 
 func (os *OrderStore) GetOrder(id string) ([]models.Order, error) {
-	query := "SELECT id, productId, customerId, date, quantity, totalPrice FROM orders WHERE id = ?"
+	query := "SELECT id, productId, customerId, date, quantity, productPriceAtPurchase FROM orders WHERE id = ?"
 	rows, err := os.db.Query(query, id)
 
 	if err != nil {

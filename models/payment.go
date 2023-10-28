@@ -5,9 +5,9 @@ type Payment struct {
 	Products   []struct {
 		ProductId    string `json:"productId"`
 		Quantity     int    `json:"quantity"`
-		Price        int    `json:"price"`
+		Price        int64    `json:"price"`
 		BoughtInBulk bool   `json:"boughtInBulk"`
 	} `json:"products"`
-	CustomerId int    `json:"customerId"`
+	CustomerId string    `json:"customerId"`
 	ReaderId   string `json:"readerId"`
 }

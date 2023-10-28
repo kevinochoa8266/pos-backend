@@ -2,16 +2,14 @@ package models
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Order struct {
-	Id                     uuid.UUID `json:"id"`
+	Id                     string    `json:"id"`
 	ProductId              string    `json:"productId"`
-	CustomerId             int       `json:"customerId"`
+	CustomerId             string    `json:"customerId"`
 	Date                   time.Time `json:"date"`
 	BoughtInBulk           bool      `json:"boughtInBulk"`
 	Quantity               int       `json:"quantity"`
-	ProductPriceAtPurchase int64       `json:"price"`
+	ProductPriceAtPurchase int64     `json:"price"`
 }
