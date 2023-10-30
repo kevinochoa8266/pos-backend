@@ -34,11 +34,11 @@ func CreateSchema(db *sql.DB) error {
 	_, storeErr := db.Exec(`CREATE TABLE IF NOT EXISTS store(
 		id TEXT PRIMARY KEY,
 		address TEXT NOT NULL,
-		city TEXT,
-		state TEXT,
-		country TEXT,
-		postal TEXT,
-		name TEXT
+		city TEXT NOT NULL,
+		state TEXT NOT NULL,
+		country TEXT NOT NULL,
+		postal TEXT NOT NULL,
+		name TEXT NOT NULL
 		);
 		`)
 	if storeErr != nil {
@@ -47,7 +47,7 @@ func CreateSchema(db *sql.DB) error {
 	_, readerErr := db.Exec(`CREATE TABLE IF NOT EXISTS reader(
 		id TEXT PRIMARY KEY,
 		name TEXT,
-		locationId TEXT,
+		locationId TEXT NOT NULL,
 		FOREIGN KEY (locationId) REFERENCES store (id) 
 		);
 		`)
@@ -57,9 +57,9 @@ func CreateSchema(db *sql.DB) error {
 	_, empErr := db.Exec(`CREATE TABLE IF NOT EXISTS employee(
 		id INTEGER PRIMARY KEY,
 		fullName TEXT NOT NULL,
-		phoneNumber TEXT NOT NULL,
-		address TEXT,
-		storeId INTEGER,
+		phoneNumber TEXT,
+		address TEXT NOT NULL,
+		storeId INTEGER UNIQUE NOT NULL,
 		FOREIGN KEY (storeId) REFERENCES store (id)
 		);
 		`)
@@ -71,8 +71,8 @@ func CreateSchema(db *sql.DB) error {
 		id TEXT PRIMARY KEY,
 		name TEXT NOT NULL,
 		bulkPrice INTEGER NOT NULL,
-		inventory INTEGER,
-		storeId INTEGER,
+		inventory INTEGER NOT NULL,
+		storeId INTEGER NOT NULL,
 		FOREIGN KEY(storeId) REFERENCES store(id)
 		);
 		`)
@@ -81,7 +81,7 @@ func CreateSchema(db *sql.DB) error {
 	}
 
 	_, bulkErr := db.Exec(`CREATE TABLE IF NOT EXISTS bulk(
-		productId TEXT,
+		productId TEXT PRIMARY KEY,
 		unitPrice INTEGER NOT NULL,
 		itemsInPacket INTEGER NOT NULL,
 		FOREIGN KEY (productId) REFERENCES product(id)
@@ -93,7 +93,7 @@ func CreateSchema(db *sql.DB) error {
 
 	_, favErr := db.Exec(`CREATE TABLE IF NOT EXISTS favorite(
 		id TEXT PRIMARY KEY,
-		data BLOB,
+		data BLOB NOT NULL,
 		FOREIGN KEY (id) REFERENCES product (id)
 		);
 		`)
@@ -103,9 +103,11 @@ func CreateSchema(db *sql.DB) error {
 
 	_, custErr := db.Exec(`CREATE TABLE IF NOT EXISTS customer(
 		id INTEGER PRIMARY KEY,
-		fullName TEXT NOT NULL,
-		phoneNumber TEXT NOT NULL,
-		email TEXT
+		firstName TEXT NOT NULL,
+		lastName TEXT NOT NULL,
+		phoneNumber TEXT,
+		email TEXT UNIQUE,
+		address TEXT 
 		);
 		`)
 	if custErr != nil {
@@ -116,10 +118,11 @@ func CreateSchema(db *sql.DB) error {
 		id TEXT NOT NULL,
 		date DATE NOT NULL,
 		quantity INTEGER NOT NULL,
-		totalPrice INTEGER NOT NULL,
+		priceAtPurchase INTEGER NOT NULL,
 		productId INTEGER NOT NULL,
 		customerId INTEGER,
-		FOREIGN KEY (productId) REFERENCES product (id)
+		FOREIGN KEY (productId) REFERENCES product (id),
+		FOREIGN KEY (customerId) REFERENCES customer (id)
 		);
 		`)
 	if orderErr != nil {
