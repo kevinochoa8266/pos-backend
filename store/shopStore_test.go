@@ -8,12 +8,16 @@ import (
 )
 
 func TestStoreSave(t *testing.T) {
-	newStore := store.NewStore(db)
+	newStore := store.NewShopStore(db)
 
 	store := models.Store{
 		Id:      "TR",
-		Name:    "ABC Store",
-		Address: "345 AVE",
+		Address: "ABC AVE",
+		City:    "Medellin",
+		State:   "Antioquia",
+		Country: "CO",
+		Postal:  "050037",
+		Name:    "Dulce",
 	}
 
 	_, err := newStore.Save(&store)
@@ -23,7 +27,7 @@ func TestStoreSave(t *testing.T) {
 }
 
 func TestStoreGet(t *testing.T) {
-	shopStore := store.NewStore(db)
+	shopStore := store.NewShopStore(db)
 
 	id := "FF"
 	_, err := shopStore.Get(id)
@@ -42,7 +46,7 @@ func TestStoreGet(t *testing.T) {
 }
 
 func TestStoreGetAll(t *testing.T) {
-	shopStore := store.NewStore(db)
+	shopStore := store.NewShopStore(db)
 
 	shops, err := shopStore.GetAll()
 
@@ -56,7 +60,7 @@ func TestStoreGetAll(t *testing.T) {
 }
 
 func TestStoreUpdate(t *testing.T) {
-	shopStore := store.NewStore(db)
+	shopStore := store.NewShopStore(db)
 
 	shop, err := shopStore.Get("FF")
 

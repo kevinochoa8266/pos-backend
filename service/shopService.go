@@ -1,16 +1,21 @@
 package service
 
 import (
+	"database/sql"
+	"fmt"
 	"os"
 
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
 	"github.com/stripe/stripe-go/v75"
 	"github.com/stripe/stripe-go/v75/terminal/location"
+	"github.com/stripe/stripe-go/v75/terminal/reader"
 )
 
-func CreateLocation() (string, error) {
-	reader_location := models.Reader{
+var db *sql.DB
+
+func CreateLocation() (*stripe.TerminalLocation, error) {
+	reader_location := models.Store{
 		Address: os.Getenv("STORE_ADDRESS"),
 		City:    os.Getenv("STORE_CITY"),
 		State:   os.Getenv("STORE_STATE"),
@@ -30,23 +35,47 @@ func CreateLocation() (string, error) {
 	}
 	l, err := location.New(params)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return l.ID, nil
+	return l, nil
 }
 
-func InitializeShop(shop *store.ShopStore) error {
-	locationId, err := CreateLocation()
+func SaveReader(params *stripe.TerminalReaderParams, readerStore *store.ReaderStore) error {
+
+	reader, err := reader.New(params)
+	if err != nil {
+		return fmt.Errorf("unable to create a new reader, error: %s", err.Error())
+	}
+
+	storedReader := models.Reader{
+		Id:         reader.ID,
+		Name:       reader.Label,
+		LocationId: reader.Location.ID,
+	}
+
+	_, err = readerStore.Save(&storedReader)
+
 	if err != nil {
 		return err
 	}
 
-	name := os.Getenv("STORE_NAME")
-	address := os.Getenv("STORE_ADDRESS")
+	return nil
+}
+
+func InitializeShop(shop *store.ShopStore) error {
+	location, err := CreateLocation()
+	if err != nil {
+		return err
+	}
+
 	candyShop := models.Store{
-		Id:      locationId,
-		Name:    name,
-		Address: address,
+		Id:      location.ID,
+		Address: location.Address.Line1,
+		City:    location.Address.City,
+		State:   location.Address.State,
+		Country: location.Address.Country,
+		Postal:  location.Address.PostalCode,
+		Name:    location.DisplayName,
 	}
 
 	_, err = shop.Save(&candyShop)
