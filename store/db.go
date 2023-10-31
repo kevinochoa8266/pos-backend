@@ -59,7 +59,7 @@ func CreateSchema(db *sql.DB) error {
 		fullName TEXT NOT NULL,
 		phoneNumber TEXT,
 		address TEXT NOT NULL,
-		storeId INTEGER UNIQUE NOT NULL,
+		storeId INTEGER NOT NULL,
 		FOREIGN KEY (storeId) REFERENCES store (id)
 		);
 		`)

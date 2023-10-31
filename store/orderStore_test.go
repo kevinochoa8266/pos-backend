@@ -22,7 +22,7 @@ func TestSaveOrder(t *testing.T) {
 
 	err := orderStore.Save(&order)
 	if err != nil {
-		t.Error("unable to save a order into the database")
+		t.Errorf("unable to save a order into the database, err: %s", err.Error())
 	}
 
 	order.ProductId = "id does not exist"
@@ -43,7 +43,6 @@ func TestGetOrders(t *testing.T) {
 
 	for i := 0; i < 2; i++ {
 		order.Id = order.Id + strconv.Itoa(i)
-		order.Id = "tr_"
 		err := orderStore.Save(&order)
 		if err != nil {
 			t.Error("unable to create the orders for the test")
@@ -62,10 +61,11 @@ func TestGetOrders(t *testing.T) {
 func TestGetOrder(t *testing.T) {
 	order := models.Order{
 		Id:         "tr_abc123",
-		ProductId:  "6",
-		CustomerId: 0,
-		Date:       time.Now(),
+		Date: time.Now(),
 		Quantity:   5,
+		PriceAtPurchase: 10,
+		ProductId: "1",
+		CustomerId: 0,
 	}
 
 	for i := 0; i < 3; i++ {

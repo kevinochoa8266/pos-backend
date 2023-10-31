@@ -24,7 +24,8 @@ func (os *OrderStore) Save(order *models.Order) error {
 		order.Quantity,
 		order.PriceAtPurchase,
 		order.ProductId,
-		order.CustomerId)
+		checkCustomerId(int16(order.CustomerId)),
+	)
 	if err != nil {
 		return fmt.Errorf("unable to perform insert of order. err: %s", err.Error())
 	}
@@ -48,18 +49,27 @@ func (os *OrderStore) GetOrders() ([]models.Order, error) {
 	for rows.Next() {
 		order := models.Order{}
 
-		err := rows.Scan(&order.Id, &order.ProductId,
-			&order.CustomerId, &order.Date, &order.Quantity, &order.TotalPrice)
+		var customerId sql.NullInt16
+
+		err := rows.Scan(&order.Id, &order.Date,
+			&order.Quantity, &order.PriceAtPurchase, &order.ProductId, &customerId)
 		if err != nil {
 			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
 		}
+
+		if customerId.Valid {
+			order.CustomerId = int(customerId.Int16)
+		} else {
+			order.CustomerId = 0
+		}
+
 		orders = append(orders, order)
 	}
 	return orders, nil
 }
 
 func (os *OrderStore) GetOrder(id string) ([]models.Order, error) {
-	query := "SELECT id, productId, customerId, date, quantity FROM orders WHERE id = ?"
+	query := "SELECT id, date, quantity, priceAtPurchase, productId, customerId FROM orders WHERE id = ?"
 	rows, err := os.db.Query(query, id)
 
 	if err != nil {
@@ -70,13 +80,30 @@ func (os *OrderStore) GetOrder(id string) ([]models.Order, error) {
 	orders := []models.Order{}
 	for rows.Next() {
 		order := models.Order{}
+		var customerId sql.NullInt16
 
-		err := rows.Scan(&order.Id, &order.ProductId,
-			&order.CustomerId, &order.Date, &order.Quantity)
+		err := rows.Scan(&order.Id, &order.Date,
+			&order.Quantity, &order.PriceAtPurchase, &order.ProductId, &customerId)
 		if err != nil {
 			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
+		}
+
+		if customerId.Valid {
+			order.CustomerId = int(customerId.Int16)
+		} else {
+			order.CustomerId = 0
 		}
 		orders = append(orders, order)
 	}
 	return orders, nil
+}
+
+func checkCustomerId(customerId int16) sql.NullInt16 {
+	if customerId == 0 {
+		return sql.NullInt16{}
+	}
+	return sql.NullInt16{
+		Int16: customerId,
+		Valid: true,
+	}
 }
