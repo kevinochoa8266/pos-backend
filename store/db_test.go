@@ -13,13 +13,17 @@ var name = "John"
 var number = "9417160432"
 var address = "123 abc"
 
-var storeName = "XYZ Store"
+var storeId = "FF"
 var storeAddress = "123 abc street"
+var storeCity = "Medellin"
+var storeState = "Antioquia"
+var storeCountry = "CO"
+var storePostal = "050037"
+var storeName = "XYZ Store"
 
 var productName = "Chocolate"
-var price = 5
+var price int64 = 5
 var inventory = 100
-var storeId = 2
 
 var db, _ = store.GetConnection(dbUrl)
 
@@ -29,19 +33,26 @@ func init() {
 		panic(err)
 	}
 
-	storeQuery := "INSERT INTO store (name, address) VALUES(?, ?)"
-
-	for i := 0; i < 3; i++ {
-		_, err := db.Exec(storeQuery, storeName, storeAddress)
-		if err != nil {
-			panic(err)
-		}
+	query := `INSERT INTO store (
+				Id,
+				address,
+				city,
+				state,
+				country,
+				postal,
+				name
+				)
+				VALUES(?, ?, ?, ?, ?, ?, ?);
+	`
+	_, err = db.Exec(query, storeId, storeAddress, storeCity, storeState, storeCountry, storePostal, storeName)
+	if err != nil {
+		panic(err)
 	}
 
 	employeeQuery := "INSERT INTO employee (fullName, phoneNumber, address, storeId) VALUES(?, ?, ?, ?);"
 
 	for i := 0; i < 3; i++ {
-		_, err := db.Exec(employeeQuery, name, number, address, 1)
+		_, err := db.Exec(employeeQuery, name, number, address, storeId)
 		if err != nil {
 			panic(err)
 		}
@@ -50,18 +61,17 @@ func init() {
 
 	for i := 1; i < 10; i++ {
 		_, err := ps.Save(&models.Product{
-						Id: strconv.Itoa(i),
-						Name: productName,
-						UnitPrice: price,
-						Inventory: inventory,
-						BulkPrice: price * 5,
-						ItemsInPacket: 10,
-						StoreId: storeId})
+			Id:            strconv.Itoa(i),
+			Name:          productName,
+			UnitPrice:     price,
+			Inventory:     inventory,
+			BulkPrice:     price * 5,
+			ItemsInPacket: 10,
+			StoreId:       storeId})
 		if err != nil {
 			panic(err)
 		}
 	}
-
 
 }
 

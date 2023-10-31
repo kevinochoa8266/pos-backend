@@ -1,7 +1,11 @@
 package models
 
 type Store struct {
-	Id      int
-	Name    string
-	Address string
+	Id      	string
+	Address		string
+	City		string
+	State		string
+	Country		string
+	Postal		string
+	Name		string
 }

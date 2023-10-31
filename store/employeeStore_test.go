@@ -40,10 +40,10 @@ func TestSaveEmployee(t *testing.T) {
 
 	employee := models.Employee{
 		Id:      0,
-		Name:    name,
+		FullName:    name,
 		Phone:   number,
 		Address: address,
-		StoreId: 1,
+		StoreId: "FF",
 	}
 	_, err := employeeStore.Save(&employee)
 	if err != nil {
@@ -59,7 +59,7 @@ func TestUpdate(t *testing.T) {
 		t.Error("could not get the employee from the db")
 	}
 
-	employee.Name = "Anthony"
+	employee.FullName = "Anthony"
 
 	err = employeeStore.Update(employee)
 	if err != nil {

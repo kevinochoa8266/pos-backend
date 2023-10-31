@@ -12,7 +12,7 @@ import (
 	"github.com/kevinochoa8266/pos-backend/store"
 )
 
-func LoadProductsIntoStore(storeId int64, db *sql.DB, path string) error {
+func LoadProductsIntoStore(storeId string, db *sql.DB, path string) error {
 	f, err := os.Open(path)
 	if err != nil {
 		return err
@@ -32,7 +32,7 @@ func LoadProductsIntoStore(storeId int64, db *sql.DB, path string) error {
 		if err != nil {
 			panic(err)
 		}
-		product.StoreId = int(storeId)
+		product.StoreId = storeId
 		if _, err = ps.Save(product); err != nil {
 			return fmt.Errorf("product (%s, %s) could not be saved: %s",
 				product.Id,
@@ -51,15 +51,15 @@ func extractProduct(l []string) (*models.Product, error) {
 	taxDecimal := float32(tax) / 100.0
 	taxApplied, _ := strconv.ParseBool(l[3])
 	product.Inventory, _ = strconv.Atoi(l[4])
-	product.BulkPrice, _ = strconv.Atoi(l[5])
-	product.UnitPrice, _ = strconv.Atoi(l[6])
+	product.BulkPrice, _ = strconv.ParseInt(l[5], 10, 64)
+	product.UnitPrice, _ = strconv.ParseInt(l[6], 10, 64)
 	product.ItemsInPacket, _ = strconv.Atoi(l[7])
 
 	if tax != 0 && !taxApplied {
-		var taxPrice float32 = float32(product.BulkPrice) * taxDecimal
-		product.BulkPrice += int(taxPrice)
+		var taxPrice = float32(product.BulkPrice) * taxDecimal
+		product.BulkPrice = int64(product.BulkPrice + int64(taxPrice))
 		if product.UnitPrice != 0 {
-			product.UnitPrice += int(taxPrice)
+			product.UnitPrice += int64(taxPrice)
 		}
 	}
 

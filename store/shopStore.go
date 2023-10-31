@@ -2,66 +2,64 @@ package store
 
 import (
 	"database/sql"
-	"errors"
+	"fmt"
 
 	"github.com/kevinochoa8266/pos-backend/models"
 )
 
-var errFoo = errors.New("the shop with this id can not be found")
-
-type shopStore struct {
+type ShopStore struct {
 	db *sql.DB
 }
 
-func NewStore(db *sql.DB) *shopStore {
-	return &shopStore{db: db}
+func NewShopStore(db *sql.DB) *ShopStore {
+	return &ShopStore{db: db}
 }
 
-func (Store *shopStore) Save(store *models.Store) (int64, error) {
+func (Store *ShopStore) Save(store *models.Store) (string, error) {
 	query := `INSERT INTO store (
 				Id,
-				name,
-				address
+				address,
+				city,
+				state,
+				country,
+				postal,
+				name
 				)
-				VALUES(?, ?, ?);
+				VALUES(?, ?, ?, ?, ?, ?, ?);
 	`
-	result, err := Store.db.Exec(query, &store.Id, &store.Name, &store.Address)
+	_, err := Store.db.Exec(query, &store.Id, &store.Address, &store.City, &store.State, &store.Country, &store.Postal, &store.Name)
 	if err != nil {
-		return 0, err
+		return "", fmt.Errorf("unable to save store into database, error: %s", err.Error())
 	}
 
-	id, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-	return id, nil
+	return store.Id, nil
 }
 
-func (Store *shopStore) Get(id int) (*models.Store, error) {
+func (Store *ShopStore) Get(id string) (*models.Store, error) {
 	query := `SELECT * FROM store s WHERE s.id = ?;`
 
 	result := Store.db.QueryRow(query, id)
 
 	if result.Err() != nil {
-		return nil, errFoo
+		return nil, fmt.Errorf("unable to fetch store with id: %s, error: %s", id, result.Err().Error())
 	}
 
 	shop := models.Store{}
 
-	err := result.Scan(&shop.Id, &shop.Name, &shop.Address)
+	err := result.Scan(&shop.Id, &shop.Address, &shop.City, &shop.State, &shop.Country, &shop.Postal, &shop.Name)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to parse a row, err: %s", err.Error())
 	}
 	return &shop, nil
 }
 
-func (Store *shopStore) GetAll() ([]models.Store, error) {
+func (Store *ShopStore) GetAll() ([]models.Store, error) {
 	query := `SELECT * FROM store;`
 
 	result, err := Store.db.Query(query)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to fetch all stores from database, error: %s", err.Error())
 	}
 
 	defer result.Close()
@@ -70,23 +68,23 @@ func (Store *shopStore) GetAll() ([]models.Store, error) {
 
 	for result.Next() {
 		shop := models.Store{}
-		err := result.Scan(&shop.Id, &shop.Name, &shop.Address)
+		err := result.Scan(&shop.Id, &shop.Address, &shop.City, &shop.State, &shop.Country, &shop.Postal, &shop.Name)
 
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("unable to parse a row, err: %s", err.Error())
 		}
 		shops = append(shops, shop)
 	}
 	return shops, nil
 }
 
-func (Store *shopStore) Update(store *models.Store) error {
+func (Store *ShopStore) Update(store *models.Store) error {
 	query := `UPDATE store SET Name = ?, Address = ? WHERE Id = ?`
 
-	result, err := Store.db.Exec(query, &store.Name, &store.Address, &store.Id)
+	result, err := Store.db.Exec(query, &store.Id, &store.Address, &store.City, &store.State, &store.Country, &store.Postal, &store.Name)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to update store in database with id: %s, error: %s", store.Id, err.Error())
 	}
 
 	rowsUpdated, err := result.RowsAffected()
@@ -97,7 +95,7 @@ func (Store *shopStore) Update(store *models.Store) error {
 }
 
 // TODO: Clean up the deletes from all foreign keys before deleting this store
-// func (Store *shopStore) Delete(Id int) error {
+// func (Store  shopStore) Delete(Id int) error {
 // 	query := `DELETE FROM store WHERE Id = ?`
 
 // 	result, err := Store.db.Exec(query, Id)

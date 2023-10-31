@@ -12,7 +12,7 @@ var product = models.Product{
 	Name:      "Chocolate",
 	BulkPrice: 5.00,
 	Inventory: 100,
-	StoreId:   2,
+	StoreId:   "FF",
 }
 
 var productStore = store.NewProductStore(db)
@@ -36,7 +36,7 @@ func TestSaveBulkProduct(t *testing.T) {
 		Name:      "chips",
 		BulkPrice: 5.00,
 		Inventory: 100,
-		StoreId:   2,
+		StoreId:   "FF",
 	}
 	_, err := productStore.Save(&chips)
 	if err != nil {
@@ -108,7 +108,7 @@ func TestUpdateProduct(t *testing.T) {
 
 func TestDeleteProduct(t *testing.T) {
 	invalidId := "2525"
-	product, _ := productStore.Get("2")
+	product, _ := productStore.Get("7")
 	err := productStore.Delete(product)
 	if err != nil {
 		t.Error(err.Error())

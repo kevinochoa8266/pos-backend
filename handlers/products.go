@@ -4,30 +4,23 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
-
-	"log/slog"
 )
-
-var db *sql.DB
-var productStore *store.ProductStore
 
 var logger = slog.Default()
 
-func init() {
-	dbUrl := "store.db"
+var productStore *store.ProductStore
 
-	var err error
-
-	db, err = store.GetConnection(dbUrl)
-	if err != nil {
-		panic(err)
-	}
+func SetDatabase(db *sql.DB) {
 	productStore = store.NewProductStore(db)
+	imageStore = store.NewImageStore(db)
+	shopStore = store.NewShopStore(db)
+	readerStore = store.NewReaderStore(db)
 }
 
 func HandleGetProducts(writer http.ResponseWriter, request *http.Request) {
@@ -48,7 +41,8 @@ func HandleGetProduct(writer http.ResponseWriter, request *http.Request) {
 	product, err := productStore.Get(productId)
 	if err != nil {
 		writer.WriteHeader(http.StatusBadRequest)
-		logger.Error("could not retrieve product with id %s due to: %s", productId, err.Error())
+		logger.Error(fmt.Sprintf("unable to get product with id %s, err: %s", productId, err.Error()))
+		return
 	}
 
 	writer.WriteHeader(http.StatusOK)
@@ -62,11 +56,46 @@ func HandleAddProduct(writer http.ResponseWriter, request *http.Request) {
 	id, err := productStore.Save(&product)
 	if err != nil {
 		writer.WriteHeader(http.StatusBadRequest)
-		returnErr := fmt.Errorf("could not save product with id: %s", product.Id)
-		finalErr, _ := json.Marshal(returnErr.Error())
-		writer.Write(finalErr)
-		logger.Error("could not save given product %s into database. err: %s", product.Name, err.Error())
+		logger.Error(err.Error())
+		return
 	}
 	writer.WriteHeader(http.StatusOK)
 	json.NewEncoder(writer).Encode(id)
+}
+
+func HandleUpdateProduct(w http.ResponseWriter, r *http.Request) {
+	var product models.Product
+	json.NewDecoder(r.Body).Decode(&product)
+
+	_, err := productStore.Get(product.Id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if err := productStore.Update(&product); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		logger.Error(err.Error())
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(product)
+}
+
+func HandleDeleteProduct(w http.ResponseWriter, r *http.Request) {
+	var product models.Product
+
+	if err := json.NewDecoder(r.Body).Decode(&product); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		logger.Error(err.Error())
+		return
+	}
+
+	if err := productStore.Delete(&product); err != nil {
+		logger.Error(err.Error())
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
