@@ -1,7 +1,7 @@
 package models
 
 type Payment struct {
-	OrderTotal string         `json:"orderTotal"`
+	OrderTotal int64         `json:"orderTotal"`
 	Products   []ProductOrder `json:"products"`
 	CustomerId string         `json:"customerId"`
 	ReaderId   string         `json:"readerId"`
