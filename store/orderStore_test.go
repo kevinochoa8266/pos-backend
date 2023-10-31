@@ -5,8 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/uuid"
-
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
 )
@@ -15,18 +13,16 @@ var orderStore = store.NewOrderStore(db)
 
 func TestSaveOrder(t *testing.T) {
 	order := models.Order{
-		Id:           uuid.New(),
-		ProductId:    "1",
-		CustomerId:   0,
-		Date:         time.Now(),
-		BoughtInBulk: false,
-		Quantity:     5,
-		TotalPrice:   4500,
+		Id:         "tr_jubilee",
+		ProductId:  "1",
+		CustomerId: 0,
+		Date:       time.Now(),
+		Quantity:   5,
 	}
 
 	err := orderStore.Save(&order)
 	if err != nil {
-		t.Error("unable to save a order into the database")
+		t.Errorf("unable to save a order into the database, err: %s", err.Error())
 	}
 
 	order.ProductId = "id does not exist"
@@ -36,18 +32,18 @@ func TestSaveOrder(t *testing.T) {
 	}
 }
 
+//add comment to see the updates get added
 func TestGetOrders(t *testing.T) {
 	order := models.Order{
-		Id:         uuid.New(),
+		Id:         "tr_jubo",
 		ProductId:  "1",
 		CustomerId: 0,
 		Date:       time.Now(),
 		Quantity:   5,
-		TotalPrice: 4500,
 	}
 
 	for i := 0; i < 2; i++ {
-		order.Id = uuid.New()
+		order.Id = order.Id + strconv.Itoa(i)
 		err := orderStore.Save(&order)
 		if err != nil {
 			t.Error("unable to create the orders for the test")
@@ -64,15 +60,13 @@ func TestGetOrders(t *testing.T) {
 }
 
 func TestGetOrder(t *testing.T) {
-
 	order := models.Order{
-		Id:           uuid.New(),
-		ProductId:    "6",
-		CustomerId:   0,
-		Date:         time.Now(),
-		BoughtInBulk: false,
-		Quantity:     5,
-		TotalPrice:   4500,
+		Id:         "tr_abc123",
+		Date: time.Now(),
+		Quantity:   5,
+		PriceAtPurchase: 10,
+		ProductId: "1",
+		CustomerId: 0,
 	}
 
 	for i := 0; i < 3; i++ {
@@ -85,7 +79,7 @@ func TestGetOrder(t *testing.T) {
 		}
 	}
 
-	orders, err := orderStore.GetOrder(order.Id.String())
+	orders, err := orderStore.GetOrder(order.Id)
 	if err != nil {
 		t.Error(err.Error())
 	}
