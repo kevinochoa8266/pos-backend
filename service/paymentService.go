@@ -18,9 +18,23 @@ import (
 2. Send email reciepts to customers
 3. Update inventory after payment is successful
 4. Create customer with stripe and save them in our db
+5. Fetch order functionality. Fetch by id and date? CustomerId?
+6. will there ever be refunds or cancellations?
+7. check inventory while the order is being created.
+8. handle when customerId is ""
 */
 
-func TransactionProcess(params *stripe.PaymentIntentParams, payment models.Payment, order *store.OrderStore) (string, error) {
+func TransactionProcess(payment models.Payment, order *store.OrderStore) (string, error) {
+	params := &stripe.PaymentIntentParams{
+		Amount:       &payment.OrderTotal,
+		Currency:     stripe.String(string(stripe.CurrencyUSD)),
+		Customer:     stripe.String(payment.CustomerId),
+		ReceiptEmail: stripe.String("kevin.ochoa@ufl.edu"), // this will be changed to the customer email
+		PaymentMethodTypes: stripe.StringSlice([]string{
+			"card_present",
+		}),
+		CaptureMethod: stripe.String("automatic"),
+	}
 
 	pi, err := paymentintent.New(params)
 
@@ -43,7 +57,7 @@ func TransactionProcess(params *stripe.PaymentIntentParams, payment models.Payme
 	if resp == "succeeded" {
 		err = SaveOrder(pi.ID, pi.Created, payment, order)
 		if err != nil {
-			return resp, err //Let anthony know that I still want the transaction to be successful even if the order is unable to save.
+			return resp, err //Let anthony know that I want the transaction to be successful even if the order is unable to save.
 		}
 	}
 	return resp, nil
