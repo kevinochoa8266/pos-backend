@@ -16,15 +16,16 @@ func NewOrderStore(db *sql.DB) *OrderStore {
 }
 
 func (os *OrderStore) Save(order *models.Order) error {
-	query := "INSERT INTO orders (id, productId, customerId, date, quantity, productPriceAtPurchase) VALUES(?,?,?,?,?,?)"
+	query := "INSERT INTO orders (id, date, quantity, priceAtPurchase, productId, customerId) VALUES(?,?,?,?,?,?)"
 
 	result, err := os.db.Exec(query,
 		order.Id,
-		order.ProductId,
-		order.CustomerId,
 		order.Date,
 		order.Quantity,
-		order.ProductPriceAtPurchase)
+		order.PriceAtPurchase,
+		order.ProductId,
+		order.CustomerId,
+	)
 	if err != nil {
 		return fmt.Errorf("unable to perform insert of order. err: %s", err.Error())
 	}
@@ -36,7 +37,7 @@ func (os *OrderStore) Save(order *models.Order) error {
 }
 
 func (os *OrderStore) GetOrders() ([]models.Order, error) {
-	query := "SELECT id, productId, customerId, date, quantity, productPriceAtPurchase FROM orders"
+	query := "SELECT id, date, quantity, priceAtPurchase, productId, customerId FROM orders"
 
 	rows, err := os.db.Query(query)
 	if err != nil {
@@ -48,18 +49,19 @@ func (os *OrderStore) GetOrders() ([]models.Order, error) {
 	for rows.Next() {
 		order := models.Order{}
 
-		err := rows.Scan(&order.Id, &order.ProductId,
-			&order.CustomerId, &order.Date, &order.Quantity, &order.ProductPriceAtPurchase)
+		err := rows.Scan(&order.Id, &order.Date,
+			&order.Quantity, &order.PriceAtPurchase, &order.ProductId, &order.CustomerId)
 		if err != nil {
 			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
 		}
+
 		orders = append(orders, order)
 	}
 	return orders, nil
 }
 
 func (os *OrderStore) GetOrder(id string) ([]models.Order, error) {
-	query := "SELECT id, productId, customerId, date, quantity, productPriceAtPurchase FROM orders WHERE id = ?"
+	query := "SELECT id, date, quantity, priceAtPurchase, productId, customerId FROM orders WHERE id = ?"
 	rows, err := os.db.Query(query, id)
 
 	if err != nil {
@@ -71,8 +73,8 @@ func (os *OrderStore) GetOrder(id string) ([]models.Order, error) {
 	for rows.Next() {
 		order := models.Order{}
 
-		err := rows.Scan(&order.Id, &order.ProductId,
-			&order.CustomerId, &order.Date, &order.Quantity, &order.ProductPriceAtPurchase)
+		err := rows.Scan(&order.Id, &order.Date,
+			&order.Quantity, &order.PriceAtPurchase, &order.ProductId, &order.CustomerId)
 		if err != nil {
 			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
 		}

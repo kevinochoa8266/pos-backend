@@ -108,7 +108,7 @@ func TestUpdateProduct(t *testing.T) {
 
 func TestDeleteProduct(t *testing.T) {
 	invalidId := "2525"
-	product, _ := productStore.Get("2")
+	product, _ := productStore.Get("7")
 	err := productStore.Delete(product)
 	if err != nil {
 		t.Error(err.Error())

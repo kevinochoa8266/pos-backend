@@ -25,7 +25,7 @@ func (employeeStore *EmployeeStore) Save(employee *models.Employee) (int64, erro
 				)
 				VALUES(?, ?, ?, ?);
 	`
-	result, err := employeeStore.db.Exec(query, &employee.Name, &employee.Phone, &employee.Address, &employee.StoreId)
+	result, err := employeeStore.db.Exec(query, &employee.FullName, &employee.Phone, &employee.Address, &employee.StoreId)
 	if err != nil {
 		return 0, fmt.Errorf("unable to save employee into database, error: %s", err.Error())
 	}
@@ -47,7 +47,7 @@ func (employeeStore *EmployeeStore) Get(id int) (*models.Employee, error) {
 	}
 	employee := models.Employee{}
 
-	err := row.Scan(&employee.Id, &employee.Name, &employee.Phone, &employee.Address, &employee.StoreId)
+	err := row.Scan(&employee.Id, &employee.FullName, &employee.Phone, &employee.Address, &employee.StoreId)
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse a row, err: %s", err.Error())
 	}
@@ -67,7 +67,7 @@ func (employeeStore *EmployeeStore) GetAll() ([]models.Employee, error) {
 
 	for rows.Next() {
 		employee := models.Employee{}
-		err := rows.Scan(&employee.Id, &employee.Name, &employee.Phone, &employee.Address, &employee.StoreId)
+		err := rows.Scan(&employee.Id, &employee.FullName, &employee.Phone, &employee.Address, &employee.StoreId)
 		if err != nil {
 			return nil, fmt.Errorf("unable to parse a row, err: %s", err.Error())
 		}
@@ -82,7 +82,7 @@ func (employeeStore *EmployeeStore) Update(employee *models.Employee) error {
 		SET fullname = ?, phoneNumber = ?, address = ?, storeId = ?
 		WHERE id = ? 
 	`
-	result, err := employeeStore.db.Exec(query, &employee.Name, &employee.Phone,
+	result, err := employeeStore.db.Exec(query, &employee.FullName, &employee.Phone,
 		employee.Address, employee.StoreId, employee.Id)
 	if err != nil {
 		return fmt.Errorf("unable to update employee in database with id: %d, error: %s", employee.Id, err.Error())

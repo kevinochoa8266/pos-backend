@@ -13,18 +13,17 @@ var orderStore = store.NewOrderStore(db)
 
 func TestSaveOrder(t *testing.T) {
 	order := models.Order{
-		Id:                     "pi-123",
-		ProductId:              "1",
-		CustomerId:             "cu-123",
-		Date:                   time.Now(),
-		BoughtInBulk:           false,
-		Quantity:               5,
-		ProductPriceAtPurchase: 4500,
+		Id:         "tr_jubilee",
+		ProductId:  "2",
+		CustomerId: "cu-123",
+		Date:       time.Now(),
+		Quantity:   5,
+		PriceAtPurchase: 1750,
 	}
 
 	err := orderStore.Save(&order)
 	if err != nil {
-		t.Error("unable to save a order into the database")
+		t.Errorf("unable to save a order into the database, err: %s", err.Error())
 	}
 
 	order.ProductId = "id does not exist"
@@ -34,18 +33,19 @@ func TestSaveOrder(t *testing.T) {
 	}
 }
 
+//add comment to see the updates get added
 func TestGetOrders(t *testing.T) {
 	order := models.Order{
-		Id:                     "pi-123",
-		ProductId:              "1",
-		CustomerId:             "cu-123",
-		Date:                   time.Now(),
-		Quantity:               5,
-		ProductPriceAtPurchase: 4500,
+		Id:         "tr_jubo",
+		ProductId:  "1",
+		CustomerId: "cu-123",
+		Date:       time.Now(),
+		Quantity:   5,
+		PriceAtPurchase: 1750,
 	}
 
 	for i := 0; i < 2; i++ {
-		order.Id = "pi-" + strconv.Itoa(i)
+		order.Id = order.Id + strconv.Itoa(i)
 		err := orderStore.Save(&order)
 		if err != nil {
 			t.Error("unable to create the orders for the test")
@@ -62,15 +62,13 @@ func TestGetOrders(t *testing.T) {
 }
 
 func TestGetOrder(t *testing.T) {
-
 	order := models.Order{
-		Id:                     "pi-123",
-		ProductId:              "6",
-		CustomerId:             "cu-123",
-		Date:                   time.Now(),
-		BoughtInBulk:           false,
-		Quantity:               5,
-		ProductPriceAtPurchase: 4500,
+		Id:         "tr_abc123",
+		Date: time.Now(),
+		Quantity:   5,
+		PriceAtPurchase: 10,
+		ProductId: "1",
+		CustomerId: "cu-123",
 	}
 
 	for i := 0; i < 3; i++ {

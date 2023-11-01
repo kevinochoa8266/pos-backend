@@ -102,9 +102,8 @@ func SaveOrder(paymentId string, date int64, payment models.Payment, orderStore 
 			ProductId:              payment.Products[i].ProductId,
 			CustomerId:             payment.CustomerId,
 			Date:                   time.Unix(date, 0),
-			BoughtInBulk:           payment.Products[i].BoughtInBulk,
 			Quantity:               payment.Products[i].Quantity,
-			ProductPriceAtPurchase: payment.Products[i].Price,
+			PriceAtPurchase: payment.Products[i].Price,
 		}
 		err := orderStore.Save(&newOrder)
 		if err != nil {

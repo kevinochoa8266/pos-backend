@@ -73,6 +73,21 @@ func init() {
 		}
 	}
 
+	customerStore := store.NewCustomerStore(db)
+	_, err = customerStore.Save(
+		&models.Customer{
+			Id:          "cu-123",
+			FirstName:   "John",
+			LastName:    "Doe",
+			PhoneNumber: "305-687-4999",
+			Email:       "john.doe@gmail.com",
+			Address:     "123 AVE",
+		})
+
+	if err != nil {
+		panic(err)
+	}
+
 }
 
 func TestGetConnection(t *testing.T) {
