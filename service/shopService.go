@@ -1,7 +1,6 @@
 package service
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
 
@@ -11,8 +10,6 @@ import (
 	"github.com/stripe/stripe-go/v75/terminal/location"
 	"github.com/stripe/stripe-go/v75/terminal/reader"
 )
-
-var db *sql.DB
 
 func CreateLocation() (*stripe.TerminalLocation, error) {
 	reader_location := models.Store{
@@ -35,16 +32,16 @@ func CreateLocation() (*stripe.TerminalLocation, error) {
 	}
 	l, err := location.New(params)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to create a new terminal location, error: %s", err.Error())
 	}
 	return l, nil
 }
 
-func SaveReader(params *stripe.TerminalReaderParams, readerStore *store.ReaderStore) error {
+func SaveReader(params *stripe.TerminalReaderParams, readerStore *store.ReaderStore) (string, error) {
 
 	reader, err := reader.New(params)
 	if err != nil {
-		return fmt.Errorf("unable to create a new reader, error: %s", err.Error())
+		return "", fmt.Errorf("unable to create a new reader, error: %s", err.Error())
 	}
 
 	storedReader := models.Reader{
@@ -53,13 +50,13 @@ func SaveReader(params *stripe.TerminalReaderParams, readerStore *store.ReaderSt
 		LocationId: reader.Location.ID,
 	}
 
-	_, err = readerStore.Save(&storedReader)
+	readerId, err := readerStore.Save(&storedReader)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return readerId, nil
 }
 
 func InitializeShop(shop *store.ShopStore) error {

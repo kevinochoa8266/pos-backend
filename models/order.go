@@ -10,5 +10,7 @@ type Order struct {
 	Quantity        int       `json:"quantity"`
 	PriceAtPurchase int64     `json:"priceAtPurchase"`
 	ProductId       string    `json:"productId"`
-	CustomerId      int       `json:"customerId"`
+	CustomerId      string       `json:"customerId"`
 }
+
+// delete BoughtInBulk from the order model

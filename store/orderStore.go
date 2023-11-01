@@ -24,7 +24,7 @@ func (os *OrderStore) Save(order *models.Order) error {
 		order.Quantity,
 		order.PriceAtPurchase,
 		order.ProductId,
-		checkCustomerId(int16(order.CustomerId)),
+		order.CustomerId,
 	)
 	if err != nil {
 		return fmt.Errorf("unable to perform insert of order. err: %s", err.Error())
@@ -49,18 +49,10 @@ func (os *OrderStore) GetOrders() ([]models.Order, error) {
 	for rows.Next() {
 		order := models.Order{}
 
-		var customerId sql.NullInt16
-
 		err := rows.Scan(&order.Id, &order.Date,
-			&order.Quantity, &order.PriceAtPurchase, &order.ProductId, &customerId)
+			&order.Quantity, &order.PriceAtPurchase, &order.ProductId, &order.CustomerId)
 		if err != nil {
 			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
-		}
-
-		if customerId.Valid {
-			order.CustomerId = int(customerId.Int16)
-		} else {
-			order.CustomerId = 0
 		}
 
 		orders = append(orders, order)
@@ -80,30 +72,13 @@ func (os *OrderStore) GetOrder(id string) ([]models.Order, error) {
 	orders := []models.Order{}
 	for rows.Next() {
 		order := models.Order{}
-		var customerId sql.NullInt16
 
 		err := rows.Scan(&order.Id, &order.Date,
-			&order.Quantity, &order.PriceAtPurchase, &order.ProductId, &customerId)
+			&order.Quantity, &order.PriceAtPurchase, &order.ProductId, &order.CustomerId)
 		if err != nil {
 			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
-		}
-
-		if customerId.Valid {
-			order.CustomerId = int(customerId.Int16)
-		} else {
-			order.CustomerId = 0
 		}
 		orders = append(orders, order)
 	}
 	return orders, nil
-}
-
-func checkCustomerId(customerId int16) sql.NullInt16 {
-	if customerId == 0 {
-		return sql.NullInt16{}
-	}
-	return sql.NullInt16{
-		Int16: customerId,
-		Valid: true,
-	}
 }
