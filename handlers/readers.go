@@ -36,11 +36,14 @@ func HandleRegisterReader(w http.ResponseWriter, r *http.Request) {
 		Label:            stripe.String(req.Label),
 	}
 
-	err = service.SaveReader(params, readerStore)
+	readerId, err := service.SaveReader(params, readerStore)
 
 	if err != nil {
 		logger.Error(err.Error())
+		w.WriteHeader(http.StatusBadRequest)
 	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(readerId)
 }
 
 func HandleGetReaders(writer http.ResponseWriter, request *http.Request) {
