@@ -1,7 +1,7 @@
 package models
 
 type Reader struct {
-	Id         string `json:"readerId"`
+	Id         string
 	Name       string
 	LocationId string
 }
