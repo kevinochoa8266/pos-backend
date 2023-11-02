@@ -21,7 +21,6 @@ func SetDatabase(db *sql.DB) {
 	imageStore = store.NewImageStore(db)
 	shopStore = store.NewShopStore(db)
 	readerStore = store.NewReaderStore(db)
-	orderStore = store.NewOrderStore(db)
 }
 
 func HandleGetProducts(writer http.ResponseWriter, request *http.Request) {

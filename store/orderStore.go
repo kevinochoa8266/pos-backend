@@ -16,7 +16,7 @@ func NewOrderStore(db *sql.DB) *OrderStore {
 }
 
 func (os *OrderStore) Save(order *models.Order) error {
-	query := "INSERT INTO orders (id, productId, customerId, date, quantity, productPriceAtPurchase) VALUES(?,?,?,?,?,?)"
+	query := "INSERT INTO orders (id, productId, customerId, date, quantity, totalPrice) VALUES(?,?,?,?,?,?)"
 
 	result, err := os.db.Exec(query,
 		order.Id,
@@ -24,7 +24,7 @@ func (os *OrderStore) Save(order *models.Order) error {
 		order.CustomerId,
 		order.Date,
 		order.Quantity,
-		order.ProductPriceAtPurchase)
+		order.TotalPrice)
 	if err != nil {
 		return fmt.Errorf("unable to perform insert of order. err: %s", err.Error())
 	}
@@ -36,7 +36,7 @@ func (os *OrderStore) Save(order *models.Order) error {
 }
 
 func (os *OrderStore) GetOrders() ([]models.Order, error) {
-	query := "SELECT id, productId, customerId, date, quantity, productPriceAtPurchase FROM orders"
+	query := "SELECT id, productId, customerId, date, quantity, totalPrice FROM orders"
 
 	rows, err := os.db.Query(query)
 	if err != nil {
@@ -49,7 +49,7 @@ func (os *OrderStore) GetOrders() ([]models.Order, error) {
 		order := models.Order{}
 
 		err := rows.Scan(&order.Id, &order.ProductId,
-			&order.CustomerId, &order.Date, &order.Quantity, &order.ProductPriceAtPurchase)
+			&order.CustomerId, &order.Date, &order.Quantity, &order.TotalPrice)
 		if err != nil {
 			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
 		}
@@ -59,7 +59,7 @@ func (os *OrderStore) GetOrders() ([]models.Order, error) {
 }
 
 func (os *OrderStore) GetOrder(id string) ([]models.Order, error) {
-	query := "SELECT id, productId, customerId, date, quantity, productPriceAtPurchase FROM orders WHERE id = ?"
+	query := "SELECT id, productId, customerId, date, quantity, totalPrice FROM orders WHERE id = ?"
 	rows, err := os.db.Query(query, id)
 
 	if err != nil {
@@ -72,7 +72,7 @@ func (os *OrderStore) GetOrder(id string) ([]models.Order, error) {
 		order := models.Order{}
 
 		err := rows.Scan(&order.Id, &order.ProductId,
-			&order.CustomerId, &order.Date, &order.Quantity, &order.ProductPriceAtPurchase)
+			&order.CustomerId, &order.Date, &order.Quantity, &order.TotalPrice)
 		if err != nil {
 			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
 		}

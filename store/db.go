@@ -116,9 +116,9 @@ func CreateSchema(db *sql.DB) error {
 		id TEXT NOT NULL,
 		date DATE NOT NULL,
 		quantity INTEGER NOT NULL,
-		productPriceAtPurchase INTEGER NOT NULL,
+		totalPrice INTEGER NOT NULL,
 		productId INTEGER NOT NULL,
-		customerId TEXT,
+		customerId INTEGER,
 		FOREIGN KEY (productId) REFERENCES product (id)
 		);
 		`)
