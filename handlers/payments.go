@@ -20,7 +20,7 @@ func HandleTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := service.TransactionProcess(payment, orderStore)
+	response, err := service.TransactionProcess(payment, orderStore, productStore)
 
 	if err != nil {
 		logger.Error(err.Error())
