@@ -1,4 +1,3 @@
 store.db
 coverage.out
 .env
-service/paymentService_test.go

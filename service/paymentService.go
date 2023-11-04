@@ -24,7 +24,7 @@ import (
 8. handle when customerId is ""
 */
 
-func TransactionProcess(payment models.Payment, order *store.OrderStore) (string, error) {
+func TransactionProcess(payment models.Payment, order *store.OrderStore, productStore *store.ProductStore) (string, error) {
 	params := &stripe.PaymentIntentParams{
 		Amount:       &payment.OrderTotal,
 		Currency:     stripe.String(string(stripe.CurrencyUSD)),
@@ -57,7 +57,12 @@ func TransactionProcess(payment models.Payment, order *store.OrderStore) (string
 	if resp == "succeeded" {
 		err = SaveOrder(pi.ID, pi.Created, payment, order)
 		if err != nil {
-			return resp, err //Let anthony know that I want the transaction to be successful even if the order is unable to save.
+			return resp, err
+		}
+
+		err = ProcessInventory(payment, productStore)
+		if err != nil {
+			return "", err
 		}
 	}
 	return resp, nil
@@ -98,16 +103,37 @@ func SaveOrder(paymentId string, date int64, payment models.Payment, orderStore 
 
 	for i := 0; i < orderLen; i++ {
 		newOrder := models.Order{
-			Id:                     paymentId,
-			ProductId:              payment.Products[i].ProductId,
-			CustomerId:             payment.CustomerId,
-			Date:                   time.Unix(date, 0),
-			Quantity:               payment.Products[i].Quantity,
+			Id:              paymentId,
+			ProductId:       payment.Products[i].ProductId,
+			CustomerId:      payment.CustomerId,
+			Date:            time.Unix(date, 0),
+			Quantity:        payment.Products[i].Quantity,
 			PriceAtPurchase: payment.Products[i].Price,
 		}
 		err := orderStore.Save(&newOrder)
 		if err != nil {
-			return err
+			return fmt.Errorf("unable to save order with id: %s into the database, error: %s", paymentId, err.Error())
+		}
+	}
+	return nil
+}
+
+func ProcessInventory(payment models.Payment, productStore *store.ProductStore) error {
+	orderLen := len(payment.Products)
+
+	for i := 0; i < orderLen; i++ {
+		product, err := productStore.Get(payment.Products[i].ProductId)
+		if err != nil {
+			return fmt.Errorf("unable to get product with id: %s while processing inventory, error: %s", payment.Products[i].ProductId, err.Error())
+		}
+		if payment.Products[i].BoughtInBulk {
+			orderQuantity := payment.Products[i].Quantity * product.ItemsInPacket
+			product.Inventory -= orderQuantity
+		} else {
+			product.Inventory -= payment.Products[i].Quantity
+		}
+		if err := productStore.Update(product); err != nil {
+			return fmt.Errorf("could not update a product with a new inventory, err: %s", err.Error())
 		}
 	}
 	return nil
