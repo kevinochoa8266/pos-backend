@@ -11,6 +11,11 @@ import (
 	"github.com/stripe/stripe-go/v75/terminal/reader"
 )
 
+type requirements struct {
+	RegistrationCode string `json:"registration_code"`
+	Label            string `json:"label"`
+}
+
 func CreateLocation() (*stripe.TerminalLocation, error) {
 	reader_location := models.Store{
 		Address: os.Getenv("STORE_ADDRESS"),
@@ -32,16 +37,27 @@ func CreateLocation() (*stripe.TerminalLocation, error) {
 	}
 	l, err := location.New(params)
 	if err != nil {
-		return nil, fmt.Errorf("unable to create a new terminal location, error: %s", err.Error())
+		return nil, err
 	}
 	return l, nil
 }
 
-func SaveReader(params *stripe.TerminalReaderParams, readerStore *store.ReaderStore) (string, error) {
+func SaveReader(req requirements, readerStore *store.ReaderStore, shopStore *store.ShopStore) error {
+	stores, err := shopStore.GetAll()
+	if err != nil {
+		return fmt.Errorf("unable to retrieve store when creating a reader: %v", err.Error())
+	}
+	storeId := stores[0].Id
+
+	params := &stripe.TerminalReaderParams{
+		Location:         stripe.String(storeId),
+		RegistrationCode: stripe.String(req.RegistrationCode),
+		Label:            stripe.String(req.Label),
+	}
 
 	reader, err := reader.New(params)
 	if err != nil {
-		return "", fmt.Errorf("unable to create a new reader, error: %s", err.Error())
+		return fmt.Errorf("unable to create a new reader, error: %s", err.Error())
 	}
 
 	storedReader := models.Reader{
@@ -50,13 +66,13 @@ func SaveReader(params *stripe.TerminalReaderParams, readerStore *store.ReaderSt
 		LocationId: reader.Location.ID,
 	}
 
-	readerId, err := readerStore.Save(&storedReader)
+	_, err = readerStore.Save(&storedReader)
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return readerId, nil
+	return nil
 }
 
 func InitializeShop(shop *store.ShopStore) error {
