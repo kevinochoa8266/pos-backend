@@ -42,10 +42,10 @@ func CreateLocation() (*stripe.TerminalLocation, error) {
 	return l, nil
 }
 
-func SaveReader(req requirements, readerStore *store.ReaderStore, shopStore *store.ShopStore) error {
+func SaveReader(req requirements, readerStore *store.ReaderStore, shopStore *store.ShopStore) (string, error) {
 	stores, err := shopStore.GetAll()
 	if err != nil {
-		return fmt.Errorf("unable to retrieve store when creating a reader: %v", err.Error())
+		return "", fmt.Errorf("unable to retrieve store when creating a reader: %v", err.Error())
 	}
 	storeId := stores[0].Id
 
@@ -57,7 +57,7 @@ func SaveReader(req requirements, readerStore *store.ReaderStore, shopStore *sto
 
 	reader, err := reader.New(params)
 	if err != nil {
-		return fmt.Errorf("unable to create a new reader, error: %s", err.Error())
+		return "", fmt.Errorf("unable to create a new reader, error: %s", err.Error())
 	}
 
 	storedReader := models.Reader{
@@ -66,13 +66,13 @@ func SaveReader(req requirements, readerStore *store.ReaderStore, shopStore *sto
 		LocationId: reader.Location.ID,
 	}
 
-	_, err = readerStore.Save(&storedReader)
+	id, err := readerStore.Save(&storedReader)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return id, nil
 }
 
 func InitializeShop(shop *store.ShopStore) error {

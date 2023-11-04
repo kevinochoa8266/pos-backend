@@ -22,11 +22,14 @@ func HandleRegisterReader(w http.ResponseWriter, r *http.Request) {
 		logger.Error("unable to decode json body to register a reader, error: %s", err.Error(), 1)
 		return
 	}
-	err := service.SaveReader(Req, readerStore, shopStore)
+	readerId, err := service.SaveReader(Req, readerStore, shopStore)
 
 	if err != nil {
 		logger.Error(err.Error())
 	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(readerId)
 }
 
 func HandleGetReaders(writer http.ResponseWriter, request *http.Request) {
