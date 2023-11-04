@@ -37,7 +37,7 @@ func CreateLocation() (*stripe.TerminalLocation, error) {
 	}
 	l, err := location.New(params)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to create a new location with stripe parameters: %v", err.Error())
 	}
 	return l, nil
 }

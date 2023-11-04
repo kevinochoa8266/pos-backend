@@ -16,7 +16,7 @@ func SetupApp() error {
 	if err != nil {
 		panic(err)
 	}
-	stripe.Key = os.Getenv("TEST_KEY")
+	stripe.Key = os.Getenv("STRIPE_API_KEY")
 
 	dbUrl := os.Getenv("DB_URL")
 	// Create the schema to the database
@@ -61,4 +61,3 @@ func SetupApp() error {
 	handlers.SetDatabase(db)
 	return nil
 }
-
