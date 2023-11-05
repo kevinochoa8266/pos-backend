@@ -24,12 +24,18 @@ import (
 8. handle when customerId is ""
 */
 
-func TransactionProcess(payment models.Payment, order *store.OrderStore, productStore *store.ProductStore) (string, error) {
+func TransactionProcess(payment models.Payment, order *store.OrderStore, productStore *store.ProductStore, customerStore *store.CustomerStore) (string, error) {
+	customer, err := customerStore.Get(payment.CustomerId)
+	
+	if err != nil {
+		return "", err
+	}
+
 	params := &stripe.PaymentIntentParams{
 		Amount:       &payment.OrderTotal,
 		Currency:     stripe.String(string(stripe.CurrencyUSD)),
 		Customer:     stripe.String(payment.CustomerId),
-		ReceiptEmail: stripe.String("kevin.ochoa@ufl.edu"), // this will be changed to the customer email
+		ReceiptEmail: stripe.String(customer.Email), // this will be changed to the customer email
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card_present",
 		}),

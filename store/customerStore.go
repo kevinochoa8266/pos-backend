@@ -38,3 +38,20 @@ func (customerStore *CustomerStore) Save(customer *models.Customer) (string, err
 	}
 	return customer.Id, nil
 }
+
+func (customerStore *CustomerStore) Get(id string) (*models.Customer, error) {
+	query := `
+		SELECT * FROM customer c WHERE c.id = ?;
+	`
+	row := customerStore.db.QueryRow(query, id)
+	if row.Err() != nil {
+		return nil, fmt.Errorf("unable to fetch customer with id: %s, error: %s", id, row.Err().Error())
+	}
+	customer := models.Customer{}
+
+	err := row.Scan(&customer.Id, &customer.FirstName, &customer.LastName, &customer.PhoneNumber, &customer.Email, &customer.Address)
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse a row, err: %s", err.Error())
+	}
+	return &customer, nil
+}
