@@ -102,7 +102,7 @@ func CreateSchema(db *sql.DB) error {
 	}
 
 	_, custErr := db.Exec(`CREATE TABLE IF NOT EXISTS customer(
-		id INTEGER PRIMARY KEY,
+		id TEXT PRIMARY KEY,
 		firstName TEXT NOT NULL,
 		lastName TEXT NOT NULL,
 		phoneNumber TEXT,
@@ -120,7 +120,7 @@ func CreateSchema(db *sql.DB) error {
 		quantity INTEGER NOT NULL,
 		priceAtPurchase INTEGER NOT NULL,
 		productId INTEGER NOT NULL,
-		customerId INTEGER,
+		customerId TEXT,
 		FOREIGN KEY (productId) REFERENCES product (id),
 		FOREIGN KEY (customerId) REFERENCES customer (id)
 		);
