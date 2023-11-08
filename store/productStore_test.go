@@ -15,7 +15,7 @@ var product = models.Product{
 	StoreId:   "FF",
 }
 
-var productStore = store.NewProductStore(db)
+var productStore = store.NewProductStore(DB)
 
 func TestSaveProduct(t *testing.T) {
 

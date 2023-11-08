@@ -8,7 +8,7 @@ import (
 )
 
 func TestGet(t *testing.T) {
-	employeeStore := store.NewEmployeeStore(db)
+	employeeStore := store.NewEmployeeStore(DB)
 
 	id1 := 1
 	_, err := employeeStore.Get(id1)
@@ -23,7 +23,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestGetAll(t *testing.T) {
-	employeeStore := store.NewEmployeeStore(db)
+	employeeStore := store.NewEmployeeStore(DB)
 
 	employees, err := employeeStore.GetAll()
 	if err != nil {
@@ -36,7 +36,7 @@ func TestGetAll(t *testing.T) {
 }
 
 func TestSaveEmployee(t *testing.T) {
-	employeeStore := store.NewEmployeeStore(db)
+	employeeStore := store.NewEmployeeStore(DB)
 
 	employee := models.Employee{
 		Id:      0,
@@ -52,11 +52,11 @@ func TestSaveEmployee(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
-	employeeStore := store.NewEmployeeStore(db)
+	employeeStore := store.NewEmployeeStore(DB)
 
 	employee, err := employeeStore.Get(3)
 	if err != nil {
-		t.Error("could not get the employee from the db")
+		t.Error("could not get the employee from the DB")
 	}
 
 	employee.FullName = "Anthony"
@@ -68,7 +68,7 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	employeeStore := store.NewEmployeeStore(db)
+	employeeStore := store.NewEmployeeStore(DB)
 
 	err := employeeStore.Delete(2)
 	if err != nil {

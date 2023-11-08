@@ -2,7 +2,11 @@ package store
 
 import (
 	"database/sql"
+	"strconv"
+	"time"
 
+	"github.com/google/uuid"
+	"github.com/kevinochoa8266/pos-backend/models"
 	_ "modernc.org/sqlite"
 )
 
@@ -130,4 +134,93 @@ func CreateSchema(db *sql.DB) error {
 	}
 
 	return nil
+}
+
+func BuildTestDb(db *sql.DB) {
+	var name = "John"
+	var number = "9417160432"
+	var address = "123 abc"
+
+	var storeId = "FF"
+	var storeAddress = "123 abc street"
+	var storeCity = "Gainesville"
+	var storeState = "FL"
+	var storeCountry = "USA"
+	var storePostal = "050037"
+	var storeName = "XYZ Store"
+
+	var productName = "Chocolate"
+	var price int64 = 5
+	var inventory = 100
+
+	if err := CreateSchema(db); err != nil {
+		panic(err)
+	}
+	shopStore := NewShopStore(db)
+	_, err := shopStore.Save(&models.Store{
+		Id: storeId,
+		Name: storeName,
+		Address: storeAddress,
+		City: storeCity,
+		State: storeState,
+		Country: storeCountry,
+		Postal: storePostal,
+	}); if err != nil {
+		panic(err)
+	}
+	es := NewEmployeeStore(db)
+
+	for i := 0; i < 3; i++ {
+		if _, err := es.Save(&models.Employee{
+			FullName: name,
+			Phone: number,
+			Address: address,
+			StoreId: storeId,
+		}); err != nil {
+			panic(err)
+		}
+	}
+	ps := NewProductStore(db)
+
+	// add products
+	for i := 0; i < 10; i++ {
+		_, err := ps.Save(&models.Product{
+			Id:            strconv.Itoa(i),
+			Name:          productName,
+			UnitPrice:     price,
+			Inventory:     inventory,
+			BulkPrice:     price * 5,
+			ItemsInPacket: 10,
+			StoreId:       storeId})
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	//add orders
+	order := models.Order{
+		Id:              "abr_123",
+		Date:            time.Now(),
+		Quantity:        3,
+		ProductId:       "",
+		PriceAtPurchase: 320,
+		CustomerId:      0,
+	}
+	orderStore := NewOrderStore(db)
+	for i := 0; i < 4; i++ {
+		productId := strconv.Itoa(i)
+		product, _ := ps.Get(productId)
+		order.ProductId = productId
+		order.PriceAtPurchase = product.BulkPrice
+		err := orderStore.Save(&order)
+		if err != nil {
+			panic(err)
+		}
+	}
+	for i := 0; i < 3; i++ {
+		order.Id = uuid.NewString()
+		if err := orderStore.Save(&order); err != nil {
+			panic(err)
+		}
+	}
 }

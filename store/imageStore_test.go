@@ -10,7 +10,7 @@ import (
 	"github.com/kevinochoa8266/pos-backend/store"
 )
 
-var imageStore = store.NewImageStore(db)
+var imageStore = store.NewImageStore(DB)
 var imageData, _ = os.ReadFile("../snickers.png")
 
 var image = models.Image{Id: "3", Data: imageData}
@@ -41,7 +41,7 @@ func TestGetImage(t *testing.T) {
 }
 
 func TestGetAllImages(t *testing.T) {
-	ps := store.NewProductStore(db)
+	ps := store.NewProductStore(DB)
 	for i := 20; i < 23; i++ {
 		product := models.Product{}
 		product.Id = strconv.Itoa(i)

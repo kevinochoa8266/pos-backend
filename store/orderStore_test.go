@@ -9,7 +9,7 @@ import (
 	"github.com/kevinochoa8266/pos-backend/store"
 )
 
-var orderStore = store.NewOrderStore(db)
+var orderStore = store.NewOrderStore(DB)
 
 func TestSaveOrder(t *testing.T) {
 	order := models.Order{

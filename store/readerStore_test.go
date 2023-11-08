@@ -8,7 +8,7 @@ import (
 )
 
 func TestReaderSave(t *testing.T) {
-	newStore := store.NewReaderStore(db)
+	newStore := store.NewReaderStore(DB)
 
 	reader := models.Reader{
 		Id:         "XZY",
@@ -23,7 +23,7 @@ func TestReaderSave(t *testing.T) {
 }
 
 func TestReaderGetAll(t *testing.T) {
-	newStore := store.NewReaderStore(db)
+	newStore := store.NewReaderStore(DB)
 	reader := models.Reader{
 		Id:         "abc",
 		Name:       "reader-one",

@@ -7,9 +7,9 @@ import (
 	"github.com/kevinochoa8266/pos-backend/store"
 )
 
-func TestStoreSave(t *testing.T) {
-	newStore := store.NewShopStore(db)
+var shopStore = store.NewShopStore(DB)
 
+func TestStoreSave(t *testing.T) {
 	store := models.Store{
 		Id:      "TR",
 		Address: "ABC AVE",
@@ -20,14 +20,13 @@ func TestStoreSave(t *testing.T) {
 		Name:    "Dulce",
 	}
 
-	_, err := newStore.Save(&store)
+	_, err := shopStore.Save(&store)
 	if err != nil {
 		t.Error("could not save a new store in the database")
 	}
 }
 
 func TestStoreGet(t *testing.T) {
-	shopStore := store.NewShopStore(db)
 
 	id := "FF"
 	_, err := shopStore.Get(id)
@@ -46,8 +45,6 @@ func TestStoreGet(t *testing.T) {
 }
 
 func TestStoreGetAll(t *testing.T) {
-	shopStore := store.NewShopStore(db)
-
 	shops, err := shopStore.GetAll()
 
 	if err != nil {
@@ -60,8 +57,6 @@ func TestStoreGetAll(t *testing.T) {
 }
 
 func TestStoreUpdate(t *testing.T) {
-	shopStore := store.NewShopStore(db)
-
 	shop, err := shopStore.Get("FF")
 
 	if err != nil {
