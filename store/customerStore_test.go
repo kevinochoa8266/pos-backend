@@ -8,7 +8,7 @@ import (
 )
 
 func TestCustomerSave(t *testing.T) {
-	newStore := store.NewCustomerStore(db)
+	newStore := store.NewCustomerStore(DB)
 
 	customer := models.Customer{
 		Id:         "cu-124",

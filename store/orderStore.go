@@ -18,13 +18,23 @@ func NewOrderStore(db *sql.DB) *OrderStore {
 func (os *OrderStore) Save(order *models.Order) error {
 	query := "INSERT INTO orders (id, date, quantity, priceAtPurchase, productId, customerId) VALUES(?,?,?,?,?,?)"
 
+	var customerId *sql.NullString
+
+	if order.CustomerId == "0" {
+		customerId = &sql.NullString{}
+	}
+
+	customerId = &sql.NullString{
+		String: order.CustomerId,
+	}
+
 	result, err := os.db.Exec(query,
 		order.Id,
 		order.Date,
 		order.Quantity,
 		order.PriceAtPurchase,
 		order.ProductId,
-		order.CustomerId,
+		customerId,
 	)
 	if err != nil {
 		return fmt.Errorf("unable to perform insert of order. err: %s", err.Error())
@@ -45,17 +55,9 @@ func (os *OrderStore) GetOrders() ([]models.Order, error) {
 	}
 	defer rows.Close()
 
-	orders := []models.Order{}
-	for rows.Next() {
-		order := models.Order{}
-
-		err := rows.Scan(&order.Id, &order.Date,
-			&order.Quantity, &order.PriceAtPurchase, &order.ProductId, &order.CustomerId)
-		if err != nil {
-			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
-		}
-
-		orders = append(orders, order)
+	orders, err := os.retrieveOrders(rows)
+	if err != nil {
+		return nil, err
 	}
 	return orders, nil
 }
@@ -69,14 +71,30 @@ func (os *OrderStore) GetOrder(id string) ([]models.Order, error) {
 	}
 	defer rows.Close()
 
+	orders, err := os.retrieveOrders(rows)
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
+}
+
+func (os *OrderStore) retrieveOrders(rows *sql.Rows) ([]models.Order, error) {
 	orders := []models.Order{}
 	for rows.Next() {
 		order := models.Order{}
 
+		customerId := sql.NullString{}
+
 		err := rows.Scan(&order.Id, &order.Date,
-			&order.Quantity, &order.PriceAtPurchase, &order.ProductId, &order.CustomerId)
+			&order.Quantity, &order.PriceAtPurchase, &order.ProductId, &customerId)
 		if err != nil {
-			return nil, fmt.Errorf("unable to parse a row. err: %s", err.Error())
+			return nil, fmt.Errorf("unable to parse the rows for retrieving orders, err: %s", err.Error())
+		}
+
+		if !customerId.Valid {
+			order.CustomerId = "0"
+		} else {
+			order.CustomerId = customerId.String
 		}
 		orders = append(orders, order)
 	}

@@ -158,14 +158,15 @@ func BuildTestDb(db *sql.DB) {
 	}
 	shopStore := NewShopStore(db)
 	_, err := shopStore.Save(&models.Store{
-		Id: storeId,
-		Name: storeName,
+		Id:      storeId,
+		Name:    storeName,
 		Address: storeAddress,
-		City: storeCity,
-		State: storeState,
+		City:    storeCity,
+		State:   storeState,
 		Country: storeCountry,
-		Postal: storePostal,
-	}); if err != nil {
+		Postal:  storePostal,
+	})
+	if err != nil {
 		panic(err)
 	}
 	es := NewEmployeeStore(db)
@@ -173,9 +174,9 @@ func BuildTestDb(db *sql.DB) {
 	for i := 0; i < 3; i++ {
 		if _, err := es.Save(&models.Employee{
 			FullName: name,
-			Phone: number,
-			Address: address,
-			StoreId: storeId,
+			Phone:    number,
+			Address:  address,
+			StoreId:  storeId,
 		}); err != nil {
 			panic(err)
 		}
@@ -204,7 +205,7 @@ func BuildTestDb(db *sql.DB) {
 		Quantity:        3,
 		ProductId:       "",
 		PriceAtPurchase: 320,
-		CustomerId:      0,
+		CustomerId:      "0",
 	}
 	orderStore := NewOrderStore(db)
 	for i := 0; i < 4; i++ {
