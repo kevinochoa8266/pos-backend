@@ -1,10 +1,10 @@
 package models
 
 type Payment struct {
-	OrderTotal int64         `json:"orderTotal"`
-	Products   []ProductOrder `json:"products"`
-	CustomerId string         `json:"customerId"`
-	ReaderId   string         `json:"readerId"`
+	OrderTotal    int64          `json:"orderTotal"`
+	Products      []ProductOrder `json:"products"`
+	CustomerEmail string         `json:"email"`
+	ReaderId      string         `json:"readerId"`
 }
 
 type ProductOrder struct {

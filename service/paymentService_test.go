@@ -1,13 +1,16 @@
 package service_test
 
 import (
+	"os"
 	"testing"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/service"
 	"github.com/kevinochoa8266/pos-backend/store"
 	"github.com/kevinochoa8266/pos-backend/utils"
+	"github.com/stripe/stripe-go/v75"
 )
 
 var db, _ = store.GetConnection(":memory:")
@@ -20,7 +23,14 @@ var coke250_inventory = 113
 var diabolin_inventory = 24
 
 func init() {
-	err := store.CreateSchema(db)
+	err := godotenv.Load("../.env")
+	if err != nil {
+		panic(err)
+	}
+
+	stripe.Key = os.Getenv("STRIPE_API_KEY")
+
+	err = store.CreateSchema(db)
 	if err != nil {
 		panic(err)
 	}
@@ -58,7 +68,7 @@ func TestSaveOrder(t *testing.T) {
 	var payment = models.Payment{
 		OrderTotal: 11070,
 		Products:   products,
-		CustomerId: customerId,
+		CustomerEmail: "john.doe@gmail.com",
 		ReaderId:   "reader123",
 	}
 
@@ -66,7 +76,7 @@ func TestSaveOrder(t *testing.T) {
 
 	paymentId := "payment123"
 
-	err = service.SaveOrder(paymentId, date, payment, orderStore)
+	err = service.SaveOrder(paymentId, date, payment, orderStore, customerId)
 
 	if err != nil {
 		t.Errorf("Expected no error, but got an error: %s", err)
@@ -77,7 +87,7 @@ func TestProcessInventory(t *testing.T) {
 	payment := models.Payment{
 		OrderTotal: 11070,
 		Products:   products,
-		CustomerId: "cu-123",
+		CustomerEmail: "john.doe@gmail.com",
 		ReaderId:   "reader123",
 	}
 
