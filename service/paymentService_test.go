@@ -254,3 +254,26 @@ func TestProcessAndSimulatePayment(t *testing.T) {
 	}
 	
 }
+
+func TestTransactionProcess(t *testing.T) {
+
+	payment := models.Payment{
+		OrderTotal:    11070,
+		Products:      products,
+		CustomerEmail: "",
+		ReaderId:      readerId,
+	}
+
+	ExpectedResponseStatus := "succeeded"
+
+	response, err := service.TransactionProcess(payment, orderStore, productStore, customerStore)
+
+	if err != nil {
+		t.Error("The transaction was unable to process", err)
+	}
+
+	if ExpectedResponseStatus != response {
+		t.Errorf("transaction failed and was supposed to be successful")
+	}
+
+}
