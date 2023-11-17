@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
+      STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY}}
       
     steps:
       - uses: actions/checkout@v3

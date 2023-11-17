@@ -55,3 +55,20 @@ func (customerStore *CustomerStore) Get(id string) (*models.Customer, error) {
 	}
 	return &customer, nil
 }
+
+func (customerStore *CustomerStore) GetByEmail(email string) (string, error) {
+	query := `
+		SELECT * FROM customer c WHERE c.email = ?;
+	`
+	row := customerStore.db.QueryRow(query, email)
+	if row.Err() != nil {
+		return "", fmt.Errorf("unable to fetch customer with email: %s, error: %s", email, row.Err().Error())
+	}
+	customer := models.Customer{}
+
+	err := row.Scan(&customer.Id, &customer.FirstName, &customer.LastName, &customer.PhoneNumber, &customer.Email, &customer.Address)
+	if err != nil {
+		return "", fmt.Errorf("unable to parse a row, err: %s", err.Error())
+	}
+	return customer.Id, nil
+}
