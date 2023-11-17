@@ -18,7 +18,7 @@ import (
 */
 
 func TransactionProcess(payment models.Payment, order *store.OrderStore, productStore *store.ProductStore, customerStore *store.CustomerStore) (string, error) {
-	params, id, err := createPaymentIntentParams(payment, customerStore)
+	params, id, err := CreatePaymentIntentParams(payment, customerStore)
 
 	if err != nil {
 		return "", err
@@ -30,7 +30,7 @@ func TransactionProcess(payment models.Payment, order *store.OrderStore, product
 		return "", fmt.Errorf("unable to create a new payment intent, error: %s", err.Error())
 	}
 
-	err = processPayment(payment.ReaderId, pi.ID)
+	err = ProcessPayment(payment.ReaderId, pi.ID)
 
 	if err != nil {
 		return "", err
@@ -59,7 +59,7 @@ func TransactionProcess(payment models.Payment, order *store.OrderStore, product
 	return resp, nil
 }
 
-func processPayment(readerId string, paymentIntentId string) error {
+func ProcessPayment(readerId string, paymentIntentId string) error {
 
 	params := &stripe.TerminalReaderProcessPaymentIntentParams{
 		PaymentIntent: stripe.String(paymentIntentId),
@@ -68,7 +68,7 @@ func processPayment(readerId string, paymentIntentId string) error {
 	_, err := reader.ProcessPaymentIntent(readerId, params)
 
 	if err != nil {
-		return fmt.Errorf("the reader: %s was unable to process the payment inetent: %s, error: %s", readerId, paymentIntentId, err.Error())
+		return fmt.Errorf("the reader: %s was unable to process the payment intent: %s, error: %s", readerId, paymentIntentId, err.Error())
 	}
 	return nil
 }
@@ -130,7 +130,7 @@ func ProcessInventory(payment models.Payment, productStore *store.ProductStore) 
 	return nil
 }
 
-func createPaymentIntentParams(payment models.Payment, customerStore *store.CustomerStore) (*stripe.PaymentIntentParams, string, error) {
+func CreatePaymentIntentParams(payment models.Payment, customerStore *store.CustomerStore) (*stripe.PaymentIntentParams, string, error) {
 	params := &stripe.PaymentIntentParams{}
 	var id string
 
