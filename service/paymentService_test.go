@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -31,14 +32,22 @@ var coke250_inventory = 113
 var diabolin_inventory = 24
 
 func init() {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		panic(err)
+
+	if _, inCI := os.LookupEnv("GITHUB_ACTIONS"); inCI {
+		err := godotenv.Load()
+		if err != nil {
+			panic(fmt.Errorf("Error loading environment variables: %s", err))
+		}
+	} else {
+		err := godotenv.Load("../.env")
+		if err != nil {
+			panic(fmt.Errorf("Error loading environment variables: %s", err))
+		}
 	}
 
 	stripe.Key = os.Getenv("STRIPE_API_KEY")
 
-	err = store.CreateSchema(db)
+	err := store.CreateSchema(db)
 	if err != nil {
 		panic(err)
 	}
