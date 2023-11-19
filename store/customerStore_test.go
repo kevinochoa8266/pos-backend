@@ -1,6 +1,7 @@
 package store_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/kevinochoa8266/pos-backend/models"
@@ -68,5 +69,7 @@ func TestCustomerGet(t *testing.T) {
 	if err == nil {
 		t.Errorf("was not supposed to retrieve a customer with the id: %s", customerId)
 	}
+
+	fmt.Println("HELLO THIS IS A TEST")
 
 }
