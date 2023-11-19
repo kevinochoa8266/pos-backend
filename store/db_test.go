@@ -1,8 +1,6 @@
 package store_test
 
 import (
-	"fmt"
-	"os"
 	"strconv"
 	"testing"
 
@@ -30,11 +28,6 @@ var inventory = 100
 var db, _ = store.GetConnection(dbUrl)
 
 func init() {
-	if _, inCI := os.LookupEnv("GITHUB_ACTIONS"); inCI {
-		fmt.Println("WE ARE IN THE ACTIONS ENV")
-	} else {
-		fmt.Println("WE ARE NOT IN ACTIONS ENV")
-	}
 	err := store.CreateSchema(db)
 	if err != nil {
 		panic(err)

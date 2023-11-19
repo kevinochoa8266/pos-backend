@@ -30,14 +30,12 @@ var Req struct {
 var readerId = ""
 var coke250_inventory = 113
 var diabolin_inventory = 24
+var key = ""
 
 func init() {
-
 	if _, inCI := os.LookupEnv("GITHUB_ACTIONS"); inCI {
-		err := godotenv.Load()
-		if err != nil {
-			panic(fmt.Errorf("Error loading environment variables: %s", err))
-		}
+		fmt.Println("WE ARE IN THE ACTIONS ENV")
+		key = os.Getenv("STRIPE_API_KEY")
 	} else {
 		err := godotenv.Load("../.env")
 		if err != nil {
@@ -45,7 +43,7 @@ func init() {
 		}
 	}
 
-	stripe.Key = os.Getenv("STRIPE_API_KEY")
+	stripe.Key = key
 
 	err := store.CreateSchema(db)
 	if err != nil {
@@ -261,7 +259,7 @@ func TestProcessAndSimulatePayment(t *testing.T) {
 	if resp.Action.Status == "failed" {
 		t.Errorf("unable to simulate payment: %s", resp.Action.FailureMessage)
 	}
-	
+
 }
 
 func TestTransactionProcess(t *testing.T) {
