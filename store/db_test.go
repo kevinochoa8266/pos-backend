@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/joho/godotenv"
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
 )
@@ -32,11 +31,9 @@ var db, _ = store.GetConnection(dbUrl)
 
 func init() {
 	if _, inCI := os.LookupEnv("GITHUB_ACTIONS"); inCI {
-		err := godotenv.Load()
-		if err != nil {
-			panic(err)
-		}
 		fmt.Println("WE ARE IN THE ACTIONS ENV")
+	} else {
+		fmt.Println("WE ARE NOT IN ACTIONS ENV")
 	}
 	err := store.CreateSchema(db)
 	if err != nil {
