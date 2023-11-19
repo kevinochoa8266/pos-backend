@@ -28,3 +28,6 @@ jobs:
 
       - name: Test
         run: go test -v -cover ./...
+
+      - name: Github stuff
+        run: echo "My repo name is ${{github.repository}}"  
