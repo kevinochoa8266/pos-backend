@@ -21,9 +21,6 @@ jobs:
         with:
           go-version: "1.21.2"
 
-      - name: Github stuff
-        run: echo "My repo name is ${{github.repository}}"
-
       - name: Build
         run: go build -v ./...
 
