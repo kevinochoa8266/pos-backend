@@ -42,6 +42,7 @@ func init() {
 		os.Getenv("STORE_CITY")
 	} else {
 		err := godotenv.Load("../.env")
+		stripe.Key = os.Getenv("STRIPE_API_KEY")
 		if err != nil {
 			panic(fmt.Errorf("Error loading environment variables: %s", err))
 		}
