@@ -28,6 +28,4 @@ jobs:
         run: go build -v ./...
 
       - name: Test
-        env:
-          STRIPE_API_KEY: ${{env.STRIPE_API_KEY}}
         run: go test -v -cover ./...
