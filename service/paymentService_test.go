@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -31,14 +32,22 @@ var coke250_inventory = 113
 var diabolin_inventory = 24
 
 func init() {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		panic(err)
+	if _, inCI := os.LookupEnv("GITHUB_ACTIONS"); inCI {
+		stripe.Key = os.Getenv("STRIPE_API_KEY")
+		os.Getenv("STORE_NAME")
+		os.Getenv("STORE_ADDRESS")
+		os.Getenv("STORE_STATE")
+		os.Getenv("STORE_COUNTRY")
+		os.Getenv("STORE_POSTAL")
+		os.Getenv("STORE_CITY")
+	} else {
+		err := godotenv.Load("../.env")
+		if err != nil {
+			panic(fmt.Errorf("Error loading environment variables: %s", err))
+		}
 	}
 
-	stripe.Key = os.Getenv("STRIPE_API_KEY")
-
-	err = store.CreateSchema(db)
+	err := store.CreateSchema(db)
 	if err != nil {
 		panic(err)
 	}
@@ -252,5 +261,28 @@ func TestProcessAndSimulatePayment(t *testing.T) {
 	if resp.Action.Status == "failed" {
 		t.Errorf("unable to simulate payment: %s", resp.Action.FailureMessage)
 	}
-	
+
+}
+
+func TestTransactionProcess(t *testing.T) {
+
+	payment := models.Payment{
+		OrderTotal:    11070,
+		Products:      products,
+		CustomerEmail: "",
+		ReaderId:      readerId,
+	}
+
+	ExpectedResponseStatus := "succeeded"
+
+	response, err := service.TransactionProcess(payment, orderStore, productStore, customerStore)
+
+	if err != nil {
+		t.Error("The transaction was unable to process", err)
+	}
+
+	if ExpectedResponseStatus != response {
+		t.Errorf("transaction failed and was supposed to be successful")
+	}
+
 }

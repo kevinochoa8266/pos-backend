@@ -6,14 +6,18 @@ on:
       - main
       - develop
 
-      
-
 jobs:
   build:
     runs-on: ubuntu-latest
 
     env:
-      STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY}}
+      STRIPE_API_KEY: ${{secrets.STRIPE_API_KEY}}
+      STORE_ADDRESS: ${{vars.STORE_ADDRESS}}
+      STORE_CITY: ${{vars.STORE_CITY}}
+      STORE_COUNTRY: ${{vars.STORE_COUNTRY}}
+      STORE_NAME: ${{vars.STORE_NAME}}
+      STORE_POSTAL: ${{vars.STORE_POSTAL}}
+      STORE_STATE: ${{vars.STORE_STATE}}
       
     steps:
       - uses: actions/checkout@v3
