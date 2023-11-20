@@ -33,8 +33,13 @@ var diabolin_inventory = 24
 
 func init() {
 	if _, inCI := os.LookupEnv("GITHUB_ACTIONS"); inCI {
-		fmt.Println("WE ARE IN THE ACTIONS ENV")
 		stripe.Key = os.Getenv("STRIPE_API_KEY")
+		os.Getenv("STORE_NAME")
+		os.Getenv("STORE_ADDRESS")
+		os.Getenv("STORE_STATE")
+		os.Getenv("STORE_COUNTRY")
+		os.Getenv("STORE_POSTAL")
+		os.Getenv("STORE_CITY")
 	} else {
 		err := godotenv.Load("../.env")
 		if err != nil {
