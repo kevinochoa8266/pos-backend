@@ -1,6 +1,6 @@
-FROM golang:1.21.2-alpine
+FROM golang:1.21.2-alpine as build
 
-WORKDIR /app
+WORKDIR /src
 
 # Download the go modules
 COPY go.mod go.sum ./
@@ -8,9 +8,12 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -v -o /sweeTooth
+RUN CGO_ENABLED=0 go build -v -o sweeTooth .
 
+FROM alpine:latest
+COPY --from=build /src/sweeTooth /sweeTooth
+COPY --from=build  /src/.env .
+COPY --from=build /src/candy_data.csv .
 EXPOSE 8080
-
 CMD ["/sweeTooth"]
 
