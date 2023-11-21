@@ -8,7 +8,7 @@ import (
 	"github.com/kevinochoa8266/pos-backend/service"
 	"github.com/kevinochoa8266/pos-backend/store"
 	"github.com/kevinochoa8266/pos-backend/utils"
-	"github.com/stripe/stripe-go/v75"
+	"github.com/stripe/stripe-go/v76"
 )
 
 func SetupApp() error {

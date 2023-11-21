@@ -6,9 +6,9 @@ import (
 
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
-	"github.com/stripe/stripe-go/v75"
-	"github.com/stripe/stripe-go/v75/terminal/location"
-	"github.com/stripe/stripe-go/v75/terminal/reader"
+	"github.com/stripe/stripe-go/v76"
+	"github.com/stripe/stripe-go/v76/terminal/location"
+	"github.com/stripe/stripe-go/v76/terminal/reader"
 )
 
 type requirements struct {
