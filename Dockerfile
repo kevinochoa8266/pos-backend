@@ -10,7 +10,7 @@ COPY . .
 
 RUN CGO_ENABLED=0 go build -v -o sweeTooth .
 
-FROM alpine:latest as sweetooth-backend
+FROM alpine:latest
 COPY --from=build /src/sweeTooth /sweeTooth
 COPY --from=build  /src/.env .
 COPY --from=build /src/candy_data.csv .
