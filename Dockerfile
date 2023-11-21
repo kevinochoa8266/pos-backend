@@ -17,4 +17,3 @@ COPY --from=build  /src/.env .
 COPY --from=build /src/candy_data.csv .
 EXPOSE 8080
 CMD ["/sweeTooth"]
-

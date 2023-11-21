@@ -6,10 +6,10 @@ import (
 
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
-	"github.com/stripe/stripe-go/v75"
-	"github.com/stripe/stripe-go/v75/paymentintent"
-	"github.com/stripe/stripe-go/v75/terminal/reader"
-	readertesthelpers "github.com/stripe/stripe-go/v75/testhelpers/terminal/reader"
+	"github.com/stripe/stripe-go/v76"
+	"github.com/stripe/stripe-go/v76/paymentintent"
+	"github.com/stripe/stripe-go/v76/terminal/reader"
+	readertesthelpers "github.com/stripe/stripe-go/v76/testhelpers/terminal/reader"
 )
 
 /*

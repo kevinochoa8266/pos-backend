@@ -5,8 +5,8 @@ import (
 
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/store"
-	"github.com/stripe/stripe-go/v75"
-	"github.com/stripe/stripe-go/v75/customer"
+	"github.com/stripe/stripe-go/v76"
+	"github.com/stripe/stripe-go/v76/customer"
 )
 
 func ProccessCustomer(c models.Customer, customerStore *store.CustomerStore) (string, error) {

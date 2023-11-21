@@ -11,9 +11,9 @@ import (
 	"github.com/kevinochoa8266/pos-backend/service"
 	"github.com/kevinochoa8266/pos-backend/store"
 	"github.com/kevinochoa8266/pos-backend/utils"
-	"github.com/stripe/stripe-go/v75"
-	"github.com/stripe/stripe-go/v75/paymentintent"
-	readertesthelpers "github.com/stripe/stripe-go/v75/testhelpers/terminal/reader"
+	"github.com/stripe/stripe-go/v76"
+	"github.com/stripe/stripe-go/v76/paymentintent"
+	readertesthelpers "github.com/stripe/stripe-go/v76/testhelpers/terminal/reader"
 )
 
 var db, _ = store.GetConnection(":memory:")

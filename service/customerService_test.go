@@ -5,7 +5,7 @@ import (
 
 	"github.com/kevinochoa8266/pos-backend/models"
 	"github.com/kevinochoa8266/pos-backend/service"
-	"github.com/stripe/stripe-go/v75/customer"
+	"github.com/stripe/stripe-go/v76/customer"
 )
 
 func TestProcessCustomer(t *testing.T) {
