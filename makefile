@@ -4,11 +4,12 @@ make test:
 	rm coverage.out
 
 make build_container:
+	docker volume create storeData
 	docker build --tag sweetooth-backend .
 
 make run_container: build_container
-	docker run -d -p 8080:8080 --name pos-server -v $(pwd)/data:/data sweetooth-backend
-
+	docker run -d -p 8080:8080 --name pos-server --mount source=storeData,target=/data sweetooth-backend
+	
 make delete_container:
 	docker stop pos-server
 	docker container rm pos-server
