@@ -51,6 +51,17 @@ func HandleGetProduct(writer http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(writer).Encode(product)
 }
 
+func HandleGetFavorites(w http.ResponseWriter, r *http.Request) {
+	favorites, err := productStore.GetFavorites()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		logger.Error("unable to send the favorite products to the client", "err:", err.Error())
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(favorites)
+}
+
 func HandleAddProduct(writer http.ResponseWriter, request *http.Request) {
 	var product models.Product
 	json.NewDecoder(request.Body).Decode(&product)
