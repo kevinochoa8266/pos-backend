@@ -8,6 +8,7 @@ import (
 func CreateRouter() *mux.Router {
 	router := mux.NewRouter()
 
+	router.HandleFunc("/products/favorites", handlers.HandleGetFavorites).Methods("GET")
 	router.HandleFunc("/products", handlers.HandleGetProducts).Methods("GET")
 	router.HandleFunc("/products/{id}", handlers.HandleGetProduct).Methods("GET")
 	router.HandleFunc("/products", handlers.HandleAddProduct).Methods("POST")

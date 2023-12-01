@@ -1,6 +1,7 @@
 package store_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/kevinochoa8266/pos-backend/models"
@@ -66,6 +67,40 @@ func TestGetProduct(t *testing.T) {
 	_, err = productStore.Get("10000")
 	if err == nil {
 		t.Error("product should not exist at id 1000")
+	}
+}
+
+func TestGetFavorites(t *testing.T) {
+	products, err := productStore.GetAll()
+	if err != nil {
+		t.Errorf("unable to retrive products to set up test for getting favorites, err: %s", err.Error())
+	}
+	//get the image data for the test.
+	imageData, _ := os.ReadFile("../snickers.png")
+
+	for i := 6; i < 9; i++ {
+		image := models.Image{
+			Id:   products[i].Id,
+			Data: imageData,
+		}
+		if err := imageStore.Save(&image); err != nil {
+			t.Errorf("unable to save image into the database. err: %s", err.Error())
+		}
+	}
+	images, err := productStore.GetFavorites()
+	if err != nil {
+		t.Errorf("unable to retrieve favorites from the database, err: %s", err.Error())
+	}
+	if len(images) == 0 {
+		t.Error("no images were retrieved from the database.")
+	}
+
+	//Clean up test
+	for i := 6; i < 9; i++ {
+		_, err := imageStore.Delete(products[i].Id)
+		if err != nil {
+			t.Errorf("Unable to clean up testGetFavorites, err: %s", err.Error())
+		}
 	}
 }
 

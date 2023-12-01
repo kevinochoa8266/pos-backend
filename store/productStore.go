@@ -75,7 +75,9 @@ func (ps *ProductStore) GetAll() ([]models.Product, error) {
 	products := []models.Product{}
 
 	query := `SELECT p.id, p.name, b.unitPrice, p.bulkPrice, p.inventory, b.itemsInPacket, p.storeId FROM product p 
-	LEFT JOIN bulk b ON p.id = b.productId`
+		LEFT JOIN bulk b
+		ON p.id=b.productId
+	`
 
 	rows, err := ps.db.Query(query)
 	if err != nil {
@@ -101,6 +103,37 @@ func (ps *ProductStore) GetAll() ([]models.Product, error) {
 		products = append(products, product)
 	}
 	return products, nil
+}
+
+func (ps *ProductStore) GetFavorites() ([]models.Favorite, error) {
+
+	query := `SELECT p.id, p.name, p.bulkPrice, b.unitPrice, f.data from product p 
+	    LEFT JOIN bulk b ON p.id=b.productId
+    	JOIN favorite f ON p.id=f.id 
+`
+
+	rows, err := ps.db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("unable to perform query to retrieve favorite products, err: %s", err.Error())
+	}
+	defer rows.Close()
+
+	favorites := []models.Favorite{}
+
+	for rows.Next() {
+		favorite := models.Favorite{UnitPrice: 0}
+		var unitPrice sql.NullInt64
+
+		if err := rows.Scan(&favorite.Id, &favorite.Name, &favorite.BulkPrice, &unitPrice, &favorite.Image); err != nil {
+			return nil, fmt.Errorf("unable to process and scan the favorites after the query, err: %s", err.Error())
+		}
+		if unitPrice.Valid {
+			favorite.UnitPrice = unitPrice.Int64
+		}
+		favorites = append(favorites, favorite)
+	}
+
+	return favorites, nil
 }
 
 func (ps *ProductStore) Update(product *models.Product) error {
