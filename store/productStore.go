@@ -142,7 +142,7 @@ func (ps *ProductStore) Update(product *models.Product) error {
 		SET storeId = ?, name = ?, bulkPrice = ?, inventory = ?  
 		WHERE id = ?
 	`
-	result, err := ps.db.Exec(query, product.StoreId, product.Name, product.UnitPrice,
+	result, err := ps.db.Exec(query, product.StoreId, product.Name, product.BulkPrice,
 		product.Inventory, product.Id)
 	if err != nil {
 		return fmt.Errorf("unable to process query to update product, err: %s", err.Error())
@@ -153,7 +153,7 @@ func (ps *ProductStore) Update(product *models.Product) error {
 	}
 	if product.UnitPrice != 0 {
 		query = `UPDATE bulk SET unitPrice = ?, itemsInPacket = ? WHERE productId = ?`
-		if result, err = ps.db.Exec(query, product.BulkPrice, product.ItemsInPacket, product.Id); err != nil {
+		if result, err = ps.db.Exec(query, product.UnitPrice, product.ItemsInPacket, product.Id); err != nil {
 			return fmt.Errorf("could not update the bulk for id: %s due to, %s", product.Id, err.Error())
 		}
 		if affectedRows, _ = result.RowsAffected(); affectedRows != 1 {
