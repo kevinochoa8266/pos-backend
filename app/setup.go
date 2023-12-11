@@ -52,7 +52,7 @@ func SetupApp() error {
 			return err
 		}
 		storeId := stores[0].Id
-		if err = utils.LoadProductsIntoStore(storeId, db, "./data/demo_data.csv"); err != nil {
+		if err = utils.LoadProductsIntoStore(storeId, db, "./demo_data.csv"); err != nil {
 			return err
 		}
 	}
