@@ -121,7 +121,7 @@ func checkInventory(payment models.Payment, productStore *store.ProductStore) er
 		if err != nil {
 			return fmt.Errorf("unable to get product to check inventory, err: %s", err.Error())
 		}
-		if order.BoughtInBulk == true {
+		if order.BoughtInBulk == true && product.ItemsInPacket != 0 {
 			order.Quantity = order.Quantity * product.ItemsInPacket
 		}
 		if product.Inventory < order.Quantity {
@@ -139,7 +139,7 @@ func ProcessInventory(payment models.Payment, productStore *store.ProductStore) 
 		if err != nil {
 			return fmt.Errorf("unable to get product with id: %s while processing inventory, error: %s", payment.Products[i].ProductId, err.Error())
 		}
-		if payment.Products[i].BoughtInBulk {
+		if payment.Products[i].BoughtInBulk && product.ItemsInPacket != 0 {
 			orderQuantity := payment.Products[i].Quantity * product.ItemsInPacket
 			product.Inventory -= orderQuantity
 		} else {
