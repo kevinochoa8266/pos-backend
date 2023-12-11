@@ -14,6 +14,6 @@ FROM alpine:latest
 RUN mkdir /data
 COPY --from=build /src/sweeTooth /sweeTooth
 COPY --from=build  /src/.env .
-COPY --from=build /src/candy_data.csv .
+COPY --from=build /src/demo_data.csv .
 EXPOSE 8080
 CMD ["/sweeTooth"]
