@@ -18,6 +18,11 @@ import (
 */
 
 func TransactionProcess(payment models.Payment, order *store.OrderStore, productStore *store.ProductStore, customerStore *store.CustomerStore) (string, error) {
+
+	if err := checkInventory(payment, productStore); err != nil {
+		return "", err
+	}
+
 	params, id, err := CreatePaymentIntentParams(payment, customerStore)
 
 	if err != nil {
@@ -109,6 +114,23 @@ func SaveOrder(paymentId string, date int64, payment models.Payment, orderStore 
 	return nil
 }
 
+func checkInventory(payment models.Payment, productStore *store.ProductStore) error {
+	orders := payment.Products
+	for _, order := range orders {
+		product, err := productStore.Get(order.ProductId)
+		if err != nil {
+			return fmt.Errorf("unable to get product to check inventory, err: %s", err.Error())
+		}
+		if order.BoughtInBulk == true {
+			order.Quantity = order.Quantity * product.ItemsInPacket
+		}
+		if product.Inventory < order.Quantity {
+			return fmt.Errorf("product with id %s does not have enough inventory to complete purchase, asked for %d, only have %d",
+				order.ProductId, order.Quantity, product.Inventory)
+		}
+	}
+	return nil
+}
 func ProcessInventory(payment models.Payment, productStore *store.ProductStore) error {
 	orderLen := len(payment.Products)
 
