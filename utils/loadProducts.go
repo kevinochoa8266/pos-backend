@@ -27,8 +27,11 @@ func LoadProductsIntoStore(storeId string, db *sql.DB, path string) error {
 
 	ps := store.NewProductStore(db)
 
-	for _, line := range data[1:50] {
+	for _, line := range data {
 		product, err := extractProduct(line)
+		if product.Id == "Code" {
+			continue
+		}
 		if err != nil {
 			panic(err)
 		}

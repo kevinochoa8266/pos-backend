@@ -75,7 +75,7 @@ func init() {
 		panic(err)
 	}
 
-	if err = utils.LoadProductsIntoStore(stores[0].Id, db, "../candy_data.csv"); err != nil {
+	if err = utils.LoadProductsIntoStore(stores[0].Id, db, "../data/demo_data.csv"); err != nil {
 		panic(err)
 	}
 
