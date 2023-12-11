@@ -34,6 +34,7 @@ func HandleTransaction(w http.ResponseWriter, r *http.Request) {
 	if response == "succeeded" {
 		json.NewEncoder(w).Encode("Transaction successful.")
 	} else {
+		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode("Transaction unsuccessful.")
 	}
 }
