@@ -24,6 +24,11 @@ func HandleTransaction(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		logger.Error(err.Error())
+		w.WriteHeader(http.StatusBadRequest)
+		message := make(map[string]string)
+		message["error"] = err.Error()
+		json.NewEncoder(w).Encode(message)
+		return
 	}
 
 	if response == "succeeded" {
